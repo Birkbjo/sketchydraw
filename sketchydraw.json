@@ -1,0 +1,7 @@
+{
+  "apps" : [{
+    "name"        : "SketchyDraw",
+    "script"      : "serv.js",
+    "cwd"         : "./server",
+  }]
+}
