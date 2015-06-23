@@ -6,7 +6,7 @@ var util = require('util');
 var sys = require("sys");
 
 //Port to listen to
-var port = 8881;
+var port = require('./public/resources/setup.json').port;
 
 // This will make all the files in the folder "public"
 // accessible from the web
