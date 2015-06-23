@@ -1,0 +1,42 @@
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #2b3e50;
+}
+.container {
+
+}
+canvas {
+	width:100%;
+	height: auto;
+	background-color: white;
+	padding-bottom:0;
+}
+
+.panel {
+
+}
+#chatbox {
+	height:90%;
+}
+
+#chatForm {
+	height:10%;
+}
+.panel-primary {
+	height:100%;
+}
+.panel-heading {
+	margin-bottom:5px;
+}
+.panel-body {
+	height:90%;
+	padding-bottom:0;
+	margin-bottom:0;	
+}
+.col-md-3 {
+	height: 100%;
+}
+.col-md-6 {
+	padding: 0px 1px 0px 1px;
+}

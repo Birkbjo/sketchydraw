@@ -1,52 +1,8 @@
 <html>
 <head>
-	<link rel="stylesheet" type="text/css" href="./draw.css">
+	<link rel="stylesheet" type="text/css" href="./resources/css/draw.css">
 	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-	<script type="text/javascript">
-	check();
-	var pickedcolor = 'black';
-	var pickedsize = 3;
-	window.onload=function(){
-		var username=getCookie('name');
-		changename();
-		document.getElementById('rangesize').value = pickedsize;
-	}
-
-	function check(){
-		if(getCookie('name')==false){
-			location.href="login.html";
-		}
-		
-		
-	}
-	function changename(){
-		var name=document.getElementById('username');
-		name.innerHTML='Your name is:'+getCookie('name');
-	}
-
-	function getCookie(name) {
-		var value = "; " + document.cookie;
-		var parts = value.split("; " + name + "=");
-		if (parts.length == 2) return parts.pop().split(";").shift();
-		else return false;
-
-	}
-
-	function logout(){
-		delete_cookie('name');
-		check();
-	}
-	function delete_cookie( name ) {
-  		document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-	}
-
-	function changeSize(val) {
-		pickedsize = val;
-		$('#rangesize').val(val);
-		//document.getElementById('rangesize').value = val;
-		$('#nrSize').val(val);
-	}
-	</script>
+	<script type="text/javascript" src="./resources/js/mainutil.js"></script>
 </head>
 
 <body>
@@ -106,8 +62,8 @@
  	<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
    <script src='/socket.io/socket.io.js'></script> 
     
-	<script src="/clientdraw.js"></script>
-	<script type="text/javascript" src="/jscolor/jscolor.js"></script>    
+	<script src="./resources/js/clientdraw.js"></script>
+	<script type="text/javascript" src="./resources/js/jscolor/jscolor.js"></script>    
 </body>
 
 </html>

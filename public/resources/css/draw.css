@@ -1,0 +1,200 @@
+html {
+	font-family: 'Roboto', sans-serif;
+	margin:0;
+	padding:0;
+	background:#B0BEC5;
+			-webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+body {
+	height:950px;
+}
+input[type="button"],button,#words li {
+	font-family: 'Roboto', sans-serif;
+	height:20px;
+	background-color:#607d8B;
+	border:none;
+	color:#fff;
+     height: 32px;
+     line-height: 32px;
+	border-radius:2px;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+
+input[type="button"]:hover,button:hover,#words li:hover {
+	background-color:#546E7A;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+input[type="button"]:active,button:active,#words li:active {
+	background-color:#455A64;
+	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+}
+input[type="button"]:disabled {
+	color:#CFD8DC;
+}
+#container {
+	margin: 50px auto 0 auto;
+	width:1250px;
+
+}
+#user {
+	width:250px;
+	text-align: center;
+	float:left;
+	padding-bottom:15px;
+	background-color:#ECEFF1;
+	box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);
+}
+#timeRound {
+	font-size:24px;
+}
+#draw {
+	float:left;
+	width:700px;
+	height:800px;
+	margin:0 15px 0 15px;
+	position: relative;
+	z-index: 0;
+	background:#fff;
+	box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);
+}
+#controls {
+	background: #90A4AE;
+	height: 100px;
+}
+.controlGrp {
+	margin:5px;
+	display:block;
+	float:left;
+}
+.controlGrp input {
+	margin-top:10px;
+}
+.controlGrp input[type="number"] {
+	width:40px;
+}
+#chat {
+	width:250px;
+	height:700px;
+	float:left;
+	background-color:#ECEFF1;
+	box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);
+}
+#chat h2 {
+	text-align: center;
+	margin: 5 0 5 0;
+}
+#chat form {
+	width:219px;
+	margin:10 auto 10 auto;
+}
+#chatbox {
+	height:600px;
+	width:250px;
+	overflow-y:scroll;
+	overflow-x:hidden;
+	word-wrap:normal;
+	text-align: left;
+	list-style-type: none;
+	font-size:14px;
+	font-weight: normal;
+}
+#chatbox li {
+	padding:5px;
+}
+#connectedUsers {
+	font-size:16px;
+	width:100px;
+	margin:0 auto 15px auto;
+	text-align: left;
+}
+#connectedUsers span {
+	margin-left:10px;
+}
+
+#paper {
+	position: relative;
+	z-index: 1;
+}
+
+#cursors{
+	position:relative;
+}
+
+#cursors .cursor{
+	position:absolute;
+	width:15px;
+	height:22px;
+	background:url('http://demo.tutorialzine.com/2012/08/nodejs-drawing-game/assets/img/pointer.png') no-repeat -4px 0;
+}
+
+#overlay {
+    display:block;
+    position: absolute;    
+    width:1080;
+    height:700px;
+    background-color: gray;
+    margin:0 auto 0 auto;
+    padding: 10px;
+    opacity: .8;
+}
+#hintoverlay {
+	position: absolute;
+	text-align: center;
+	padding:2px;
+	height:50px;
+	width:200px;
+	background-color: #78909C;
+    box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);
+	font-size:1em;
+	top:10px;
+	left:50%;
+	margin-left:-100px;
+	z-index: 2;
+	color:#fff;
+}
+#hintwords {
+	letter-spacing:2px;
+}
+#turnoverlay {
+	display:none;
+	position: absolute;
+	text-align: center;
+	padding:10px;
+	width:400px;
+	height:300px;
+	background-color: #78909C;
+     box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);
+	font-size:2em;
+	top:50px;
+	left:50%;
+	margin-left:-200px;
+	z-index: 2;
+	color:#fff;
+}
+#turnoverlay ul {
+	padding:20px 0 0 0;
+}
+#turnoverlay h2 {
+	font-size: 28px;
+}
+#words {
+	font-size:18px;
+	
+}
+#words li {
+	list-style-type: none;
+	margin:20px;
+}
+#words li:hover {
+	cursor:pointer;
+}
+
+.noselect {
+
+}
