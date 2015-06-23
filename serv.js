@@ -11,8 +11,16 @@ stdin.on("data",function(d) {
 	consoleInput(d);
 });
 
+var ROUNDTIMER = 60000;
+var MAXCON = 20;
 var rooms = {};
-function createRoom(room) {
+	
+function createRoom(room,data,socket) {
+	if(room == null) {
+		console.log("Room name is null, abort");
+		io.to(socket.id).emit('disconnect',5);
+		return false;
+	}
 	rooms[room] = {};
 	rooms[room].users = {};
 	rooms[room].turn =0;
@@ -22,6 +30,11 @@ function createRoom(room) {
 	rooms[room].roundTimeout;
 	rooms[room].hintInterval = -1;
 	rooms[room].nrUsersGuessed = 0;
+	if(data.roompass != false) {
+		console.log("password: "+ data.roompass);
+		rooms[room].password = data.roompass;
+	}
+	return true;
 }
 
 // Listen for incoming connections from clients
@@ -34,13 +47,24 @@ io.sockets.on('connection', function (socket) {
         socket.broadcast.to(socket.roomid).emit('moving',data);
     });
     
-    socket.on('adduser',function(data) {
+  socket.on('adduser',function(data) {
     	socket.name = data.name;
     	socket.uid = data.id;
     	
     	if(!(data.room in rooms)) {
-    		createRoom(data.room);
+    		if(!createRoom(data.room,data,socket)) {
+    			return;
+    		};
     		console.log("Created room " + data.room);
+    	} else if(rooms[data.room].password) {
+    		console.log("Has password");
+    		if(rooms[data.room].password != data.roompass) {
+    			io.to(socket.id).emit('disconnect',2);
+    			return;
+    		}
+    	} else if(rooms[data.room].usernames > MAXCON) {
+    		console.log("Full room: " + data.room);
+    		io.to(socket.id).emit('disconnect',3);
     	}
     	if(!(data.name in rooms[data.room].users)) {
     		var usernames = rooms[data.room].usernames;
@@ -56,7 +80,7 @@ io.sockets.on('connection', function (socket) {
     	//	io.sockets.emit('updateusers',users);
     	} else {
     		var msg = {'uname':"Fail",'msg':"Name already in use"};
-    		io.to(socket.id).emit('disconnect',"usedname");
+    		io.to(socket.id).emit('disconnect',4);
     	}
     	
     	console.log(data.name + " connected " + "id: " +data.id + " joined " + data.room);
@@ -159,13 +183,7 @@ io.sockets.on('connection', function (socket) {
     			'password':(rooms[id].password) ? 'Yes': 'No'
     		});//end push
    		 };
-   		 for(var i=0;i<list.length;i++) {
-   		 	console.log(list[i].clientsnr);
-   		 }
-   		 console.log("send to " + socket.id);
    		 io.to(socket.id).emit('updatesessionlist',list);
-   		// io.to(sid).emit('yourturn',data);
-		//io.sockets.socket(sid).emit('yourturn',data);
 	});
 });
 
@@ -385,7 +403,7 @@ function cmdKickUser(cmds) {
 			if(rooms[room]) {
 				if(rooms[room].users[user]) {
 					console.log("kicking user");
-					io.to(rooms[room].users[user].usock).emit('disconnect','kicked');
+					io.to(rooms[room].users[user].usock).emit('disconnect',1);
 				}
 			}		
 		}
