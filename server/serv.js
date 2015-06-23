@@ -187,9 +187,25 @@ io.sockets.on('connection', function (socket) {
 	});
 });
 
+
+function updatesessionlist(socket) {
+    	var list =  [];
+    	for(id in rooms) {
+
+    		list.push({
+    			'name':id,
+    			'clientsnr':rooms[id].usernames.length,
+    			'password':(rooms[id].password) ? 'Yes': 'No'
+    		});//end push
+   		 };
+   		 io.emit('updatesessionlist',list);
+}
+
 function tearDownRoom(socket) {
 	delete rooms[socket.roomid];
+	updatesessionlist();
 }
+
 function endGame(socket) {
 	clearTimeout(rooms[socket.roomid].roundTimeout);
 	clearInterval(rooms[socket.roomid].hintInterval);
@@ -202,7 +218,7 @@ function endGame(socket) {
 	for(ident in room.users) {
 		room.users[ident].correct = false;
 		room.users[ident].score = 0;
-		io.to(socket.roomid).emit('updatescore',users[ident]);
+		io.to(socket.roomid).emit('updatescore',room.users[ident]);
 	}
 	
 }
