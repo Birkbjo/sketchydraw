@@ -19,7 +19,9 @@ $(function() {
 // Get The URL and portof your web server (the port is set in setup.json)
 function setUp() {
     $.getJSON('../resources/js/setup.json',function(data) {
+        console.log(getCookie('name'))
         connect(getCookie('name'),getCookie('room'),getCookie('roompass'),window.location.hostname+":"+data.port);
+
     });
 }
 function connect(name,room,pass,url) {

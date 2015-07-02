@@ -12,9 +12,9 @@
 		if(getCookie('name')==false || getCookie('room') == false){
 
 			if(err) {
-				location.href="..login/login.html?err="+err;
+				location.href="/login/index.html?err="+err;
 			} else {
-				location.href="..login/login.html";
+				location.href="/login/index.html";
 			}
 			
 		}
@@ -28,6 +28,7 @@
 	function getCookie(name) {
 		var value = "; " + document.cookie;
 		var parts = value.split("; " + name + "=");
+		console.log(value)
 		if (parts.length == 2) return parts.pop().split(";").shift();
 		else return false;
 
@@ -40,8 +41,9 @@
 		check(err);
 	}
 	function delete_cookie( name ) {
-  		document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-  		alert(document.cookie);
+  		document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;Path=/';
+  		console.log(document.cookie);
+  		return;
 	}
 
 	function changeSize(val) {

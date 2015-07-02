@@ -4,7 +4,10 @@ $.getJSON('../resources/js/setup.json',function(data) {
 	establish(data.port);
 	refreshLive();
 });
-
+var myCookie = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+if(myCookie.length>0){
+	location.href="/main/index.html";
+}
 
 function establish(port) {
 	var url = window.location.hostname+":"+port;
@@ -14,12 +17,11 @@ function establish(port) {
 }
 
 function createRoom(){
-		alert("tst")
-		var name=document.getElementById('inputName').value;
-		var room = document.getElementById('roomID').value;
-		var pass = document.getElementById('roomPassword').value;
+		var name = $('#inputName').val();
+		var room = $('#roomID').val();
+		var pass = $('#roomPassword').val();
 		//$
-		
+
 		if (name.length>0 && room.length > 0) {
 			connectRoom(name,room,pass);
 	
@@ -30,10 +32,10 @@ function createRoom(){
 
 function connectRoom(name,room,pass) {
 	if (name.length>0 && room.length > 0) {
-		document.cookie ="name=" + encodeURIComponent(name)+'; Path="/";';
-		document.cookie = "room="+encodeURIComponent(room)+'; Path="/";';
+		document.cookie ="name=" + encodeURIComponent(name)+'; Path=/';
+		document.cookie = "room="+encodeURIComponent(room)+'; Path=/';
 		if(pass && pass.length > 0) {
-			document.cookie = "roompass="+encodeURIComponent(pass)+'; Path="/";';
+			document.cookie = "roompass="+encodeURIComponent(pass)+'; Path=/';
 		}
 			
 		location.href="/main/index.html";
