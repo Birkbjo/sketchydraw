@@ -30,13 +30,13 @@ function createRoom(){
 
 function connectRoom(name,room,pass) {
 	if (name.length>0 && room.length > 0) {
-		document.cookie ="name=" + encodeURIComponent(name)+'; Path=../;';
-		document.cookie = "room="+encodeURIComponent(room)+'; Path=../;';
+		document.cookie ="name=" + encodeURIComponent(name)+'; Path="/";';
+		document.cookie = "room="+encodeURIComponent(room)+'; Path="/";';
 		if(pass && pass.length > 0) {
-			document.cookie = "roompass="+encodeURIComponent(pass)+'; Path=../;';
+			document.cookie = "roompass="+encodeURIComponent(pass)+'; Path="/";';
 		}
 			
-		location.href="index.html";
+		location.href="/main/index.html";
 	}
 }
 function connectFromList(ele) {
