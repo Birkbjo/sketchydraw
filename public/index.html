@@ -1,69 +1,28 @@
 <html>
-<head>
-	<link rel="stylesheet" type="text/css" href="./resources/css/draw.css">
-	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-	<script type="text/javascript" src="./resources/js/mainutil.js"></script>
-</head>
-
 <body>
-
-<header></header>
-
-<div id="container">
-<div id="user">
-	<p id="username" placeholder="Username"><p>
-	<input type="button" id="btnJoin" value="Logout!" onclick="logout()">
-		<h2>Time</h2>
-		<p id="timeRound">0</p>
-		<h2>Users in room</h2>
-		<div id="connectedUsers"></div>
-		<input type="button" id="btnStart" disabled value="Start drawing!">
-		<input type="button" id="btnStop" disabled value="Stop">
-	</div>
 	
-	<div id="draw">
-		<div id="hintoverlay">
-			<p id="hintwords"></p>
-		</div>
-		<div id="overlay"></div>
-		<div id="turnoverlay">
-			<h2>It's your turn, choose a word!</h2>
-			<ul id="words"></ul>
-		</div>
-		<div id="cursors"></div>
-		<canvas id="paper" width="700px" height="700px"></canvas>
-		<div id="controls">
-			<button id="clearPaper">Clear</button>
-			<div class="controlGrp">
-				<label>Pick color</label> <br />
-				<input class="color" onchange="pickedcolor=this.color.toString();">
-			</div>
-			<div class="controlGrp">
-				<label>Size</label><br />
-				<input type="range" min="1" id="rangesize" defaultValue="4"max="100" oninput="changeSize(this.value)" onchange="changeSize(this.value);">
-				<input type="number" id="nrSize" min="1" value="4" max="100" oninput="changeSize(this.value)" onchange="changeSize(this.value);" >
-				
-			</div>
+	<!-- <script src="./resources/js/mainutil.js">	
+	</script> -->
+	<script type="text/javascript">
+			if(getCookie('name')==false || getCookie('room') == false){
+
+			/*//if(err) {
+				location.href=".login/?err="+err;
+			} else {*/
+				location.href="./login";
+			//}
 			
-		</div>
-	</div>
+		} else {
+			location.href="./main";
+		}
 
-	<div id="chat">
-		<h2>Chat</h2>
-		<div id="chatbox"></div>
-		<form id="form1" action="">
-     		<input id="inputChat" placeholder="Message" autocomplete="off" />
-      		<button>Send</button>
-   		</form>
-	</div>
+	function getCookie(name) {
+		var value = "; " + document.cookie;
+		var parts = value.split("; " + name + "=");
+		if (parts.length == 2) return parts.pop().split(";").shift();
+		else return false;
 
-</div>
-
- 	<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
-   <script src='/socket.io/socket.io.js'></script> 
-    
-	<script src="./resources/js/clientdraw.js"></script>
-	<script type="text/javascript" src="./resources/js/jscolor/jscolor.js"></script>    
+	}
+	</script>
 </body>
-
 </html>

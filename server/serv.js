@@ -10,7 +10,6 @@ var stdin = process.openStdin();
 stdin.on("data",function(d) {
 	consoleInput(d);
 });
-
 var ROUNDTIMER = 60000;
 var MAXCON = 20;
 var rooms = {};

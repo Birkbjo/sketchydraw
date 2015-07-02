@@ -1,6 +1,6 @@
 var socket;
 printerr(getUrlParameter('err'));
-$.getJSON('./resources/js/setup.json',function(data) {
+$.getJSON('../resources/js/setup.json',function(data) {
 	establish(data.port);
 	refreshLive();
 });
@@ -14,6 +14,7 @@ function establish(port) {
 }
 
 function createRoom(){
+		alert("tst")
 		var name=document.getElementById('inputName').value;
 		var room = document.getElementById('roomID').value;
 		var pass = document.getElementById('roomPassword').value;
@@ -29,10 +30,10 @@ function createRoom(){
 
 function connectRoom(name,room,pass) {
 	if (name.length>0 && room.length > 0) {
-		document.cookie ="name=" + encodeURIComponent(name);
-		document.cookie = "room="+encodeURIComponent(room);
+		document.cookie ="name=" + encodeURIComponent(name)+'; Path=../;';
+		document.cookie = "room="+encodeURIComponent(room)+'; Path=../;';
 		if(pass && pass.length > 0) {
-			document.cookie = "roompass="+encodeURIComponent(pass);
+			document.cookie = "roompass="+encodeURIComponent(pass)+'; Path=../;';
 		}
 			
 		location.href="index.html";

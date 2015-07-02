@@ -1,22 +1,24 @@
-	check();
+	//check();
 	var pickedcolor = 'black';
 	var pickedsize = 3;
 	window.onload=function(){
 		var username=getCookie('name');
-		changename();
-		document.getElementById('rangesize').value = pickedsize;
+	//	changename();
+	//	document.getElementById('rangesize').value = pickedsize;
 	}
 
 	function check(err){
+		//alert(getCookie('name'))
 		if(getCookie('name')==false || getCookie('room') == false){
+
 			if(err) {
-				location.href="login.html?err="+err;
+				location.href="..login/login.html?err="+err;
 			} else {
-				location.href="login.html";
+				location.href="..login/login.html";
 			}
 			
 		}
-		
+	//	
 	}
 	function changename(){
 		var name=document.getElementById('username');
@@ -39,6 +41,7 @@
 	}
 	function delete_cookie( name ) {
   		document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+  		alert(document.cookie);
 	}
 
 	function changeSize(val) {
