@@ -28,7 +28,6 @@
 	function getCookie(name) {
 		var value = "; " + document.cookie;
 		var parts = value.split("; " + name + "=");
-		console.log(value)
 		if (parts.length == 2) return parts.pop().split(";").shift();
 		else return false;
 
@@ -42,8 +41,6 @@
 	}
 	function delete_cookie( name ) {
   		document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;Path=/';
-  		console.log(document.cookie);
-  		return;
 	}
 
 	function changeSize(val) {
