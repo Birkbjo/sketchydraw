@@ -6,7 +6,7 @@ $.getJSON('../resources/js/setup.json',function(data) {
 });
 var myCookie = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 if(myCookie.length>0){
-	location.href="/main/index.html";
+	location.href="/main/";
 }
 
 function establish(port) {
@@ -32,13 +32,13 @@ function createRoom(){
 
 function connectRoom(name,room,pass) {
 	if (name.length>0 && room.length > 0) {
-		document.cookie ="name=" + encodeURIComponent(name)+'; Path=/';
-		document.cookie = "room="+encodeURIComponent(room)+'; Path=/';
+		document.cookie ="name=" + encodeURIComponent(name)+'; path=/';
+		document.cookie = "room="+encodeURIComponent(room)+'; path=/';
 		if(pass && pass.length > 0) {
-			document.cookie = "roompass="+encodeURIComponent(pass)+'; Path=/';
+			document.cookie = "roompass="+encodeURIComponent(pass)+'; path=/';
 		}
 			
-		location.href="/main/index.html";
+		location.href="/main/";
 	}
 }
 function connectFromList(ele) {

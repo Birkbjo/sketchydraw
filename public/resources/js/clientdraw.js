@@ -29,7 +29,7 @@ function connect(name,room,pass,url) {
         alert('Sorry, it looks like your browser does not support canvas!');
         return false;
     }
-
+    if(getCookie('name') == false) return;
     
 
     var doc = $(document),

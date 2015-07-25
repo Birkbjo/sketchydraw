@@ -3,18 +3,16 @@
 	var pickedsize = 3;
 	window.onload=function(){
 		var username=getCookie('name');
-	//	changename();
 	//	document.getElementById('rangesize').value = pickedsize;
 	}
 
 	function check(err){
 		//alert(getCookie('name'))
-		if(getCookie('name')==false || getCookie('room') == false){
-
+		if(getCookie('name')==false || getCookie('room') == false || getCookie('name')==""){
 			if(err) {
-				location.href="/login/index.html?err="+err;
+				location.href="/login/?err="+err;
 			} else {
-				location.href="/login/index.html";
+				location.href="/login/";
 			}
 			
 		}
@@ -40,7 +38,9 @@
 		check(err);
 	}
 	function delete_cookie( name ) {
-  		document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;Path=/';
+  		document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+  		console.log(document.cookie);
+  		return;
 	}
 
 	function changeSize(val) {
