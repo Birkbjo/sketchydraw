@@ -41,6 +41,7 @@ function connectRoom(name,room,pass) {
 		location.href="/main/";
 	}
 }
+
 function connectFromList(ele) {
 	var name = prompt("Desired username");
 	if(name!= null) {
