@@ -38,7 +38,7 @@ function connectRoom(name,room,pass) {
 			document.cookie = "roompass="+encodeURIComponent(pass)+'; path=/';
 		}
 			
-		location.href="/main/";
+		location.href="/main/indexboot.html";
 	}
 }
 

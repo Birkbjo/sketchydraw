@@ -293,8 +293,9 @@ function connect(name,room,pass,url) {
         // Draw a line for the current user's movement, as it is
         // not received in the socket.on('moving') event above
         if(drawing){
-
-            drawLine(prev.x, prev.y, e.pageX-$('#paper').offset().left, e.pageY-$('#paper').offset().top,'#'+pickedcolor,pickedsize);
+         //   alert(e.pageX + " y: " + e.pageY)
+          //   drawLine(prev.x, prev.y, e.pageX, e.pageY,'#'+pickedcolor,pickedsize);
+        drawLine(prev.x, prev.y, e.pageX-$('#paper').offset().left, e.pageY-$('#paper').offset().top,'#'+pickedcolor,pickedsize);
 
             prev.x = e.pageX-$('#paper').offset().left;
             prev.y = e.pageY-$('#paper').offset().top;

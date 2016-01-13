@@ -1,6 +1,6 @@
 /* Setup the http-server, and start listen on port*/
 
-var app = require('http').createServer(handler),static = require('node-static');
+//var app = require('http').createServer(handler),static = require('node-static');
 var express = require('express');
 //var login = require('../public/resources/js/login.js');
 var app = express();
@@ -9,10 +9,10 @@ var server = require('http').Server(app);
 exports.io = require('socket.io').listen(server);
 var util = require('util');
 var sys = require("sys");
+var path = require("path");
 
 //Port to listen to
 var port = require('../public/resources/js/setup.json').port;
-
 // This will make all the files in the folder "public"
 // accessible from the web
 //var fileServer = new static.Server('../public',{cache:0});
@@ -24,12 +24,12 @@ console.log("Listening on port: "+port);
 // If the URL of the socket server is opened in a browser
 
 app.get("/",function (req,res) {
-	res.send("../");
+//	res.send("../");
 }); 
 
 app.get("/room/:id",function (req,res) {
-	console.log(req.params.id)
-	res.send("../main");
+	console.log(req.params.id);
+	res.sendFile(path.join(__dirname,"../public/main/index.html"));
 }); 
 function handler (request, response) {
     request.addListener('end', function () {

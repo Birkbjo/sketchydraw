@@ -20,7 +20,7 @@
 	}
 	function changename(){
 		var name=document.getElementById('username');
-		name.innerHTML='Your name is:'+getCookie('name');
+		name.innerHTML='You are logged in as:'+getCookie('name');
 	}
 
 	function getCookie(name) {
