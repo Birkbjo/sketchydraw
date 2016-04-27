@@ -110,7 +110,8 @@ function connect(name,room,pass,url) {
     var prev = {};
     $('form').submit(function() {
 
-        var msg = $('#inputChat').val();
+        var msg = $('#inputChat').val().trim();
+        if(msg === '') return false;
         socket.emit('chatmessage',{
             'uname':name,
             'msg':msg
