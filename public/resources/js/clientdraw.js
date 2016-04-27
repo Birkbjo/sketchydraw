@@ -65,7 +65,7 @@ function connect(name,room,pass,url) {
              if(count == 0) {
                 first = users[ident].name;
             }  
-            $('#connectedUsers').append($('<li id='+users[ident].id+'>').html(users[ident].name +"<span>0</span>"));
+            $('#connectedUsers').append($('<li id='+users[ident].id+'>').html(users[ident].name +"<span>"+users[ident].score+"</span>"));
             count++;
         }
      //   for(var i = 0;i<users.length;i++) {

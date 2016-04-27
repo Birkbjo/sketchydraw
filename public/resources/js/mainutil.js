@@ -3,12 +3,20 @@
 	var pickedsize = 3;
 	window.onload=function(){
 		var username=getCookie('name');
+		var room = getCookie('room');
+		if(username == false && room) { 
+			username = promptUsername();
+		}
+		check();
 	//	document.getElementById('rangesize').value = pickedsize;
 	}
 
-	function check(err){
+function check(err){
 		//alert(getCookie('name'))
 		if(getCookie('name')==false || getCookie('room') == false || getCookie('name')==""){
+			delete_cookie('name');
+			delete_cookie('room');
+			delete_cookie('roompass');
 			if(err) {
 				location.href="/login/?err="+err;
 			} else {
@@ -17,6 +25,12 @@
 			
 		}
 	//	
+	}
+	function promptUsername() {
+		var name = prompt("Desired username");
+		if(name != null) {
+			document.cookie ="name=" + encodeURIComponent(name)+'; path=/';
+		}	
 	}
 	function changename(){
 		var name=document.getElementById('username');

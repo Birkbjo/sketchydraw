@@ -38,7 +38,7 @@ function connectRoom(name,room,pass) {
 			document.cookie = "roompass="+encodeURIComponent(pass)+'; path=/';
 		}
 			
-		location.href="/main/indexboot.html";
+		location.href="/main";
 	}
 }
 
@@ -88,8 +88,14 @@ function printerr(err) {
 			case 5:
 				msg = "Room name not allowed";
 				break;
+			case 6:
+				msg = "A room with that name does not exist.";
+				break;
+			case 7:
+				msg = "Invalid username.";
+				break;
 			default: 
-				msg = "An error occured."
+				msg = "An error occured.";
 				break;
 		}
 		$('#errmsg').html('<div class="alert alert-danger">'+msg+'</div>');

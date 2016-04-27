@@ -1,4 +1,6 @@
 //Setup server
+var exports = module.exports = {};
+
 var setup = require('./setup.js');
 var io = setup.io;
 //Get wordlist
@@ -13,7 +15,7 @@ stdin.on("data",function(d) {
 var ROUNDTIMER = 60000;
 var MAXCON = 20;
 var rooms = {};
-	
+exports.rooms = rooms;
 function createRoom(room,data,socket) {
 	if(room == null) {
 		console.log("Room name is null, abort");
@@ -94,7 +96,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('startgame',function(data) {
-    	if(!(socket.name == rooms[socket.roomid].usernames[0])) return;
+    	if(!(socket.name == rooms[socket.roomid].usernames[0]) || rooms[socket.roomid].currWord != null) return;
     	rooms[socket.roomid].turn = 0;
     	startRound(socket);
     });
@@ -210,7 +212,7 @@ function endGame(socket) {
 	clearInterval(rooms[socket.roomid].hintInterval);
 	var room = rooms[socket.roomid];
 	room.currDrawer = null;
-	room.currWord = 0;
+	room.currWord = null;
 	room.nrUsersGuessed = 0;
 	room.turn = -1;
 	io.to(socket.roomid).emit('endround');
@@ -366,7 +368,7 @@ function guessedCorrectly(socket,msg) {
 	var usernames = rooms[socket.roomid].usernames;
 	if(users[socket.name].correct != true) {
 		nrUsersGuessed++;
-		rooms[socket.roomid].nrUsersGuessed = nrUsersGuessed;
+
 		console.log(msg.uname + " got it right! ");
   		socket.emit('chat',msg);
   		msg.uname = "Congratulations, you got it right";
