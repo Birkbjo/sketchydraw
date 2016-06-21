@@ -27,6 +27,7 @@ function createRoom(room,data,socket) {
 	rooms[room].turn =0;
 	rooms[room].usernames = [];
 	rooms[room].currWord = null;
+	rooms[room].leader = null;
 	rooms[room].currDrawer;
 	rooms[room].roundTimeout;
 	rooms[room].hintInterval = -1;
@@ -49,7 +50,6 @@ io.sockets.on('connection', function (socket) {
     });
     
   socket.on('adduser',function(data) {
-	  //TODO  check for userID exist and disconnect / error. Just check session.room
     	socket.name = data.name;
     	socket.uid = data.id;
 	 	 //Prevent existing users to add users
@@ -80,9 +80,15 @@ io.sockets.on('connection', function (socket) {
     		users[data.name] = data;
     		users[data.name].usock = socket.id;
     		users[data.name].score = 0;
+
     		users[data.name].correct = false;
+			if(Object.keys(users).length == 1) {
+				rooms[data.room].leader = users[data.name];
+			}
+
 			socket.request.session.room = data.room;
     		io.to(data.room).emit('updateusers',users);
+			updatesessionlist();
     	//	io.sockets.emit('updateusers',users);
     	} else {
     		var msg = {'uname':"Fail",'msg':"Name already in use"};
@@ -164,7 +170,7 @@ io.sockets.on('connection', function (socket) {
     				tearDownRoom(socket);
     			}
     		}
-    	
+			updatesessionlist();
     	}
     	
     	
@@ -210,7 +216,6 @@ function updatesessionlist(socket) {
 
 function tearDownRoom(socket) {
 	delete rooms[socket.roomid];
-	updatesessionlist();
 }
 
 function endGame(socket) {

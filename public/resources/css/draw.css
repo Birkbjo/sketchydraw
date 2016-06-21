@@ -129,9 +129,10 @@ input[type="button"]:disabled {
 
 #cursors .cursor{
 	position:absolute;
-	width:15px;
-	height:22px;
-	background:url('http://demo.tutorialzine.com/2012/08/nodejs-drawing-game/assets/img/pointer.png') no-repeat -4px 0;
+	z-index:5;
+	width:35px;
+	height:35px;
+	background:url('http://www.rw-designer.com/cursor-extern.php?id=77946') no-repeat 0 0;
 }
 
 #overlay {

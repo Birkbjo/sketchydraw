@@ -235,7 +235,7 @@ function connect(name,room,pass,url) {
         prev.y = e.changedTouches[0].pageY-$('#paper').offset().top;
     });
     
-    canvas.bind('mouseup mouseleave',function(){
+    canvas.bind('mouseup',function(){
         drawing = false;
     });
     canvas.bind('touchend',function() {
@@ -303,22 +303,6 @@ function connect(name,room,pass,url) {
         }
     });
 
-    // Remove inactive clients after 10 seconds of inactivity
-    setInterval(function(){
-
-        for(ident in clients){
-            if($.now() - clients[ident].updated > 10000){
-
-                // Last update was more than 10 seconds ago.
-                // This user has probably closed the page
-            //    socket.emit('disconnect');
-                cursors[ident].remove();
-                delete clients[ident];
-                delete cursors[ident];
-            }
-        }
-
-    },10000);
 
     function endRound() {
          allowed = false;
