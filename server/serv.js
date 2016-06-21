@@ -16,26 +16,28 @@ var ROUNDTIMER = 60000;
 var MAXCON = 20;
 var rooms = {};
 exports.rooms = rooms;
+
+function Room(data) {
+	this.users =  {};
+	this.turn = 0;
+	this.usernames = [];
+	this.currWord = null;
+	this.currDrawer = null;
+	this.roundTimeout;
+	this.hintInterval = -1;
+	this.nrUsersGuessed = 0;
+	if(data.roompass) {
+		console.log("password: "+ data.roompass);
+		this.password = data.roompass;
+	}
+}
 function createRoom(room,data,socket) {
 	if(room == null) {
 		console.log("Room name is null, abort");
 		io.to(socket.id).emit('disconnect',5);
 		return false;
 	}
-	rooms[room] = {};
-	rooms[room].users = {};
-	rooms[room].turn =0;
-	rooms[room].usernames = [];
-	rooms[room].currWord = null;
-	rooms[room].leader = null;
-	rooms[room].currDrawer;
-	rooms[room].roundTimeout;
-	rooms[room].hintInterval = -1;
-	rooms[room].nrUsersGuessed = 0;
-	if(data.roompass != false) {
-		console.log("password: "+ data.roompass);
-		rooms[room].password = data.roompass;
-	}
+	rooms[room] = new Room(data);
 	return true;
 }
 
@@ -50,6 +52,7 @@ io.sockets.on('connection', function (socket) {
     });
     
   socket.on('adduser',function(data) {
+
     	socket.name = data.name;
     	socket.uid = data.id;
 	 	 //Prevent existing users to add users
@@ -61,6 +64,7 @@ io.sockets.on('connection', function (socket) {
     			return;
     		};
     		console.log("Created room " + data.room);
+
     	} else if(rooms[data.room].password) {
     		console.log("Has password");
     		if(rooms[data.room].password != data.roompass) {
@@ -82,9 +86,6 @@ io.sockets.on('connection', function (socket) {
     		users[data.name].score = 0;
 
     		users[data.name].correct = false;
-			if(Object.keys(users).length == 1) {
-				rooms[data.room].leader = users[data.name];
-			}
 
 			socket.request.session.room = data.room;
     		io.to(data.room).emit('updateusers',users);
@@ -108,13 +109,15 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('startgame',function(data) {
-    	if(!(socket.name == rooms[socket.roomid].usernames[0]) || rooms[socket.roomid].currWord != null) return;
+		var leader = rooms[socket.roomid].usernames[0];
+    	if(!(socket.id === rooms[socket.roomid].users[leader].usock || rooms[socket.roomid].currWord != null)) return;
     	rooms[socket.roomid].turn = 0;
     	startRound(socket);
     });
 
     socket.on('chatmessage',function(msg) {
     	console.log(msg.uname +" : " +msg.msg + "--- to " + socket.roomid);
+		console.log(rooms[socket.roomid].leader());
     	var currWord = rooms[socket.roomid].currWord;
     	if(currWord != null && msg.msg.toLowerCase() == currWord.toLowerCase()) {
     		guessedCorrectly(socket,msg);
