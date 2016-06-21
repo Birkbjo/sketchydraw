@@ -52,7 +52,10 @@ io.sockets.on('connection', function (socket) {
 	  //TODO  check for userID exist and disconnect / error. Just check session.room
     	socket.name = data.name;
     	socket.uid = data.id;
-    	
+	 	 //Prevent existing users to add users
+	  	if(socket.request.session.room) {
+			io.to(socket.id).emit('disconnect',-1);
+		}
     	if(!(data.room in rooms)) {
     		if(!createRoom(data.room,data,socket)) {
     			return;
@@ -78,6 +81,7 @@ io.sockets.on('connection', function (socket) {
     		users[data.name].usock = socket.id;
     		users[data.name].score = 0;
     		users[data.name].correct = false;
+			socket.request.session.room = data.room;
     		io.to(data.room).emit('updateusers',users);
     	//	io.sockets.emit('updateusers',users);
     	} else {

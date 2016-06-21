@@ -5,7 +5,6 @@ var path = require("path");
 var serv = require('./serv.js');
 function routes(app) {
     app.get("/", function (req, res) {
-        console.log(req.cookies);
         res.redirect("/login");
     });
     app.get("/main", function (req,res) {
@@ -38,8 +37,6 @@ function routes(app) {
 
     app.post("/login", function (req, res) {
         //   authenticate()
-
-        console.log(req.body);
         req.session.regenerate(function () {
             req.session.username = req.body.username;
             res.cookie('name', req.body.username, {maxAge: SESSION_TIME, path: '/'});
