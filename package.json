@@ -4,6 +4,7 @@
   "description": "A realtime drawing game.",
   "main": "server/serv.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.13.3",
     "express-session": "^1.13.0",
     "node-static": "^0.7.7",

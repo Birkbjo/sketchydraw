@@ -49,6 +49,7 @@ io.sockets.on('connection', function (socket) {
     });
     
   socket.on('adduser',function(data) {
+	  //TODO  check for userID exist and disconnect / error. Just check session.room
     	socket.name = data.name;
     	socket.uid = data.id;
     	
@@ -92,6 +93,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('clear',function(data) {
     //	socket.broadcast.emit('clear',data);
+
     	socket.broadcast.to(socket.roomid).emit('clear',data);
     });
 

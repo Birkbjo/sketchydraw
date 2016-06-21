@@ -36,15 +36,15 @@
         <div  class="panel panel-primary">
           <div class="panel-heading" data-toggle="collapse" data-target="#create">Create or join a lobby</div>
           <div id="create" class="panel-body" >
-            <form class="form-signin" action="javascript:void(0);" onsubmit="createRoom()">
+            <form class="form-signin" action="/login" method="post">
               <label for="inputName" class="sr-only">Desired username</label>
-              <input type="username" id="inputName" class="form-control" placeholder="Username" required autofocus>
+              <input name="username" id="inputName" class="form-control" placeholder="Username" required autofocus>
 
               <label for="roomID" class="sr-only">Room</label>
-              <input type="room" id="roomID" class="form-control" placeholder="Room name" required>
+              <input name="room" id="roomID" class="form-control" placeholder="Room name" required>
 
               <label for="roomPassword" class="sr-only">Room</label>
-              <input type="room" id="roomPassword" class="form-control" placeholder="Room password (optional)">
+              <input name="roomPassword" id="roomPassword" class="form-control" placeholder="Room password (optional)">
               <button class="btn btn-lg btn-primary btn-block" type="submit">Join session</button>
             </form>
           </div>

@@ -46,13 +46,11 @@ function getCookie(name) {
 }
 
 function logout(err) {
-    delete_cookie('name');
-    delete_cookie('room');
-    delete_cookie('roompass');
-    check(err);
+    location.href="/logout";
+
 }
 function delete_cookie(name) {
-    document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+   // document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
     console.log(document.cookie);
     return;
 }
