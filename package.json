@@ -1,12 +1,13 @@
 {
   "name": "SketchyDraw",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.2",
+  "description": "A realtime drawing game.",
   "main": "server/serv.js",
   "dependencies": {
     "express": "^4.13.3",
-    "request": "^2.67.0",
+    "express-session": "^1.13.0",
     "node-static": "^0.7.7",
+    "request": "^2.67.0",
     "socket.io": "^1.3.7"
   },
   "devDependencies": {},
