@@ -34,10 +34,11 @@ function routes(app) {
     });
 
     app.post("/login", function (req, res) {
-        //   authenticate()
+
         req.session.regenerate(function () {
             req.session.username = req.body.username;
-            req.session.password = req.body.roomPassword;
+            req.session.roomPassword = req.body.roomPassword;
+
             res.cookie('name', req.body.username, {maxAge: SESSION_TIME, path: '/'});
             res.cookie('room', req.body.room, {maxAge: SESSION_TIME, path: '/'});
             res.redirect('/main');

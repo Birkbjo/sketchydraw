@@ -1,6 +1,6 @@
 var wordList = require('./words.js');
-var io = require('./setup.js');
-
+var io = require('./setup.js').io;
+var serv = require('./serv.js');
 var ROUNDTIMER = 60000;
 var MAXCON = 20;
 var wordArr = wordList.words;
@@ -8,62 +8,106 @@ var wordArr = wordList.words;
 module.exports = Room;
 
 function Room(data) {
-    this.users =  {};
+    this.users = {};
     this.turn = 0;
-    this.usernames = []; //stores id's of users
+    this.turnQueue = []; //stores id's of users
     this.currWord = null;
     this.currDrawer = null;
     this.roundTimeout;
     this.hintInterval = -1;
     this.nrUsersGuessed = 0;
     this.password = null;
-    if(data.roompass) {
-        console.log("password: "+ data.roompass);
+    if (data.roompass.length > 0) {
+        console.log("password: " + data.roompass);
         this.password = data.roompass;
     }
+
 }
 
-function User(socket,data) {
+function User(socket, data) {
     this.name = data.name;
     this.score = 0;
     this.usock = socket.id;
     this.correct = false;
 }
 
-Room.prototype.addUser = function(socket,data) {
-
+User.prototype.secureUserObject = function() {
+    return {
+        'name': this.name,
+        'correct': this.correct,
+        'score': this.score
+    }
 }
 
-Room.prototype.getUser = function(id) {
+//Used to strip out sensitive user info before sending.
+Room.prototype.secureUsers = function() {
+    var payload = {};
+    var i = 0;
+    for(var key in this.users) {
+        payload[i++] = this.users[key].secureUserObject();
+    }
+    return payload;
+}
+
+Room.prototype.addUser = function (socket, data) {
+    if (this.password) {
+        console.log("Has password");
+        if (this.password != socket.request.session.roomPassword) {
+            io.to(socket.id).emit('disconnect', 2);
+            return false;
+        }
+    } else if (this.nrOfUsers() > MAXCON) {
+        console.log("Full room: " + data.room);
+        io.to(socket.id).emit('disconnect', 3);
+        return false;
+    }
+    if (!(this.getUserByName(data.name))) {
+        socket.join(data.room);
+        socket.roomid = data.room;
+        this.turnQueue.push(socket.id);
+        var user = new User(socket,data);
+        this.users[user.usock] = user;
+        //Store room in session
+        socket.request.session.room = data.room;
+        io.to(socket.roomid).emit('updateusers', this.secureUsers());
+
+    } else { //name in use
+        io.to(socket.id).emit('disconnect', 4);
+        return false;
+    }
+    return true;
+}
+
+Room.prototype.getUser = function (id) {
     return this.users[id] || null;
 }
 
-Room.prototype.getUserByName = function(name) {
-    for(id in this.users) {
-        if(this.users[id].name === name) {
+Room.prototype.getUserByName = function (name) {
+    for (id in this.users) {
+        if (this.users[id].name === name) {
             return this.users[id];
         }
     }
     return false;
 }
 
-Room.prototype.nrOfUsers = function(name) {
+Room.prototype.nrOfUsers = function (name) {
     return Object.keys(this.users).length;
 }
 
-Room.prototype.getLeader = function() {
-    return this.users[this.usernames[0]] || null;
+Room.prototype.getLeader = function () {
+    return this.users[this.turnQueue[0]] || null;
 }
 
-Room.prototype.getDrawer = function() {
+Room.prototype.getDrawer = function () {
     return this.currDrawer;
 }
 
-Room.prototype.isDrawer = function(socket) {
+Room.prototype.isDrawer = function (socket) {
     return socket.id === currDrawer.usock;
 }
 
-Room.prototype.endGame = function(socket) {
+Room.prototype.endGame = function (socket) {
     clearTimeout(this.roundTimeout);
     clearInterval(this.hintInterval);
     this.currDrawer = null;
@@ -71,25 +115,25 @@ Room.prototype.endGame = function(socket) {
     this.nrUsersGuessed = 0;
     this.turn = -1;
     io.to(socket.roomid).emit('endround');
-    for(ident in room.users) {
+    for (ident in room.users) {
         room.users[ident].correct = false;
         room.users[ident].score = 0;
-        io.to(socket.roomid).emit('updatescore',room.users[ident]);
+        io.to(socket.roomid).emit('updatescore', room.users[ident]);
     }
 
 }
 
-Room.prototype.startRound = function(socket) {
+Room.prototype.startRound = function (socket) {
 //	currWord = "test";
     var wordRound = getRandomWords();
 
-    var thisTurnDrawer = this.usernames[this.turn];
+    var thisTurnDrawer = this.turnQueue[this.turn];
     this.currDrawer = this.getUser(thisTurnDrawer);
-    var data = {'drawer':thisTurnDrawer,'time:':ROUNDTIMER,'words':wordRound};
+    var data = {'drawer': thisTurnDrawer, 'time:': ROUNDTIMER, 'words': wordRound};
     console.log(room + ": " + " turn " + turn);
-    if(this.currDrawer) {
+    if (this.currDrawer) {
         this.currDrawer.correct = true; //mark as guessed so that no points are given
-        io.to(this.currDrawer.usock).emit('yourturn',data);
+        io.to(this.currDrawer.usock).emit('yourturn', data);
         //io.sockets.socket(sid).emit('yourturn',data);
     } else {
         console.log("test turn = 0");
@@ -97,85 +141,85 @@ Room.prototype.startRound = function(socket) {
     }
 }
 
-Room.prototype.endRound = function(socket) {
+Room.prototype.endRound = function (socket) {
     //console.log(this.hintInterval);
     clearInterval(this.hintInterval);
     this.turn++;
     var turn = this.turn;
     var currWord = this.currWord;
-    var usernames = this.usernames;
+    var usernames = this.turnQueue;
     var users = this.users;
-    if(turn >= usernames.length) {
-        this.turn=0;
+    if (turn >= usernames.length) {
+        this.turn = 0;
     }
-    var msg = {'uname':"Round ended",'msg':"The word was: "+currWord};
-    io.to(socket.roomid).emit("chat",msg);
+    var msg = {'uname': "Round ended", 'msg': "The word was: " + currWord};
+    io.to(socket.roomid).emit("chat", msg);
     this.currWord = null;
-    for(ident in users) {
-        console.log(users[ident].name + " score: "+users[ident].score);
+    for (ident in users) {
+        console.log(users[ident].name + " score: " + users[ident].score);
         users[ident].correct = false;
     }
     io.to(socket.roomid).emit('endround');
-    setTimeout(newRound(socket),1000);
+    setTimeout(newRound(socket), 1000);
 }
 
 //Called when a user has selected a word, enables guessing.
-Room.prototype.startGuess = function(socket,word) {
+Room.prototype.startGuess = function (socket, word) {
     this.currWord = word;
     this.nrUsersGuessed = 0;
     var turn = this.turn;
-    var usernames = this.usernames;
-    io.to(socket.roomid).emit('startgame',{
-        'drawer':usernames[turn],
-        'time':ROUNDTIMER
+    var usernames = this.turnQueue;
+    io.to(socket.roomid).emit('startgame', {
+        'drawer': usernames[turn],
+        'time': ROUNDTIMER
     });
-    giveHint(this.currWord,socket);
-    this.roundTimeout = setTimeout(function() {
+    giveHint(this.currWord, socket);
+    this.roundTimeout = setTimeout(function () {
         endRound(socket);
-    },ROUNDTIMER);
+    }, ROUNDTIMER);
 }
 
-Room.prototype.giveHint = function(word,socket) {
+Room.prototype.giveHint = function (word, socket) {
     var words = word.split("");
     var wordsGiven = [];
-    var times = Math.floor(words.length/2);
+    var times = Math.floor(words.length / 2);
     var spIndex = findSpaces(word);
     console.log(spIndex.toString());
-    for(var i = 0;i<spIndex.length;i++) {
+    for (var i = 0; i < spIndex.length; i++) {
         wordsGiven.push(spIndex[i]);
     }
-    var data = {'leng':words.length,'spaceInd':spIndex};
-    socket.broadcast.to(socket.roomid).emit('hintlength',data);
-    var interval = (ROUNDTIMER)/words.length;
+    var data = {'leng': words.length, 'spaceInd': spIndex};
+    socket.broadcast.to(socket.roomid).emit('hintlength', data);
+    var interval = (ROUNDTIMER) / words.length;
     var count = 0;
-    console.log("interval: " + interval + " word length" + words.length + " times: "+times );
+    console.log("interval: " + interval + " word length" + words.length + " times: " + times);
 //ar hintInterval = this.hintInterval;
-    this.hintInterval = setInterval(function() {
-        if(count >= times) {
+    this.hintInterval = setInterval(function () {
+        if (count >= times) {
             clearInterval(this.hintInterval);
             return;
         }
-        var hint = randomHint(wordsGiven,words);
+        var hint = randomHint(wordsGiven, words);
         console.log("Hint is " + hint.char + " index " + hint.index);
-        shareHint(hint.char,hint.index,socket);
+        shareHint(hint.char, hint.index, socket);
         count++;
-    },interval);
+    }, interval);
 }
 
-Room.prototype.disconnectUser = function(socket) {
+Room.prototype.disconnectUser = function (socket) {
 
 }
 
-Room.prototype.updateScores = function() {
+Room.prototype.updateScores = function () {
 
 }
 
 
 function getRandomWords() {
     var high = wordArr.length;
-    var rindex = Math.floor(Math.random()*(high));
-    var rindex2 = Math.floor(Math.random()*(high));
-    var rindex3 = Math.floor(Math.random()*(high));
-    var arr = [wordArr[rindex],wordArr[rindex2],wordArr[rindex3]];
+    var rindex = Math.floor(Math.random() * (high));
+    var rindex2 = Math.floor(Math.random() * (high));
+    var rindex3 = Math.floor(Math.random() * (high));
+    var arr = [wordArr[rindex], wordArr[rindex2], wordArr[rindex3]];
     return arr;
 }
