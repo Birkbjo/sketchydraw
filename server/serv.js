@@ -148,9 +148,9 @@ io.sockets.on('connection', function (socket) {
     socket.on('selectedword', function (word) {
         console.log("Selected word is " + word);
         if (word == null) {
-            newRound(socket);
+            rooms[socket.roomid].prepareRound(socket);
         } else {
-            startGuess(socket, word);
+            rooms[socket.roomid].startGuess(socket, word);
         }
 
     });

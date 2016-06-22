@@ -90,6 +90,10 @@ Room.prototype.getUser = function (id) {
     return this.users[id] || null;
 }
 
+Room.prototype.getThisTurnUser = function() {
+    return this.users[this.turnQueue[this.turn]];
+}
+
 Room.prototype.getUserByName = function (name) {
     for (id in this.users) {
         if (this.users[id].name === name) {
@@ -131,18 +135,27 @@ Room.prototype.endGame = function (socket) {
 
 }
 
+Room.prototype.prepareRound = function(socket) {
+    var user = this.getThisTurnUser();
+    if (user) {
+        var msg = {'uname': "Next round", 'msg': user.name + " is drawing!"};
+        io.to(socket.roomid).emit('chat', msg);
+        //io.sockets.emit('chat',msg);
+        var sock = io.to(users[usernames[turn].usock]);
+        this.startRound(socket);
+    }
+}
+
 Room.prototype.startRound = function (socket) {
 //	currWord = "test";
     var wordRound = getRandomWords();
 
-    var thisTurnDrawer = this.turnQueue[this.turn];
-    this.currDrawer = this.getUser(thisTurnDrawer);
-    var data = {'drawer': thisTurnDrawer, 'time:': ROUNDTIMER, 'words': wordRound};
+    this.currDrawer = this.getThisTurnUser();
+    var data = {'drawer': this.currDrawer.secureUserObject(), 'time:': ROUNDTIMER, 'words': wordRound};
     console.log(room + ": " + " turn " + turn);
     if (this.currDrawer) {
         this.currDrawer.correct = true; //mark as guessed so that no points are given
         io.to(this.currDrawer.usock).emit('yourturn', data);
-        //io.sockets.socket(sid).emit('yourturn',data);
     } else {
         console.log("test turn = 0");
         this.turn = 0;
@@ -152,38 +165,30 @@ Room.prototype.startRound = function (socket) {
 Room.prototype.endRound = function (socket) {
     //console.log(this.hintInterval);
     clearInterval(this.hintInterval);
-    this.turn++;
-    var turn = this.turn;
-    var currWord = this.currWord;
-    var usernames = this.turnQueue;
-    var users = this.users;
-    if (turn >= usernames.length) {
-        this.turn = 0;
-    }
+    this.turn = this.turn == this.turnQueue.length -1 ? 0 : i+1;
+
     var msg = {'uname': "Round ended", 'msg': "The word was: " + currWord};
     io.to(socket.roomid).emit("chat", msg);
     this.currWord = null;
-    for (ident in users) {
-        console.log(users[ident].name + " score: " + users[ident].score);
-        users[ident].correct = false;
+    for (var key in this.users) {
+        console.log(this.users[key].name + " score: " + thisusers[key].score);
+        this.users[key].correct = false;
     }
     io.to(socket.roomid).emit('endround');
-    setTimeout(newRound(socket), 1000);
+    setTimeout(this.prepareRound(socket), 1000);
 }
 
 //Called when a user has selected a word, enables guessing.
 Room.prototype.startGuess = function (socket, word) {
     this.currWord = word;
     this.nrUsersGuessed = 0;
-    var turn = this.turn;
-    var usernames = this.turnQueue;
     io.to(socket.roomid).emit('startgame', {
-        'drawer': usernames[turn],
+        'drawer': this.getThisTurnUser().secureUserObject(),
         'time': ROUNDTIMER
     });
-    giveHint(this.currWord, socket);
+    this.giveHint(this.currWord, socket);
     this.roundTimeout = setTimeout(function () {
-        endRound(socket);
+        this.endRound(socket);
     }, ROUNDTIMER);
 }
 
