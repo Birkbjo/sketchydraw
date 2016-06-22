@@ -46,7 +46,11 @@ function getCookie(name) {
 }
 
 function logout(err) {
-    location.href="/logout";
+    if (!err) {
+        location.href = "/logout/";
+    } else if (err != "transport close"){
+        location.href = "/logout?err=" + err;
+    }
 
 }
 function delete_cookie(name) {

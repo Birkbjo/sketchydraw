@@ -4,6 +4,12 @@ var path = require("path");
 
 var serv = require('./serv.js');
 function routes(app) {
+
+    app.get("/admin", function(req,res) {
+        console.log("admin");
+        res.sendFile(path.join(__dirname,"../public/login/admin.html"));
+    });
+
     app.get("/", function (req, res) {
         res.redirect("/login");
     });
@@ -28,7 +34,12 @@ function routes(app) {
             } else {
                 res.clearCookie('name');
                 res.clearCookie('room');
-                res.redirect("/");
+                if(req.query.err) {
+                    res.redirect("/login?err="+req.query.err);
+                } else {
+                    res.redirect("/login");
+                }
+
             }
         });
     });
@@ -61,4 +72,5 @@ function routes(app) {
             res.redirect("/login?err=6");
         }
     });
+
 }

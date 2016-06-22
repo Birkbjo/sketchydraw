@@ -64,6 +64,7 @@ Room.prototype.addUser = function (socket, data) {
         }
     } else if (this.nrOfUsers() > MAXCON) {
         console.log("Full room: " + data.room);
+
         io.to(socket.id).emit('disconnect', 3);
         return false;
     }
@@ -78,6 +79,7 @@ Room.prototype.addUser = function (socket, data) {
         io.to(socket.roomid).emit('updateusers', this.secureUsers());
 
     } else { //name in use
+        console.log("disconnect user name in user");
         io.to(socket.id).emit('disconnect', 4);
         return false;
     }

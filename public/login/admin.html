@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="../resources/css/bootstrapsuper.css" rel="stylesheet">
+    <link href="../resources/css/signin.css" rel="stylesheet">
+    <title>Admin login</title>
+</head>
+<body>
+<div class="container">
+    <div id="errmsg"></div>
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading" data-toggle="collapse" data-target="#create">Admin login</div>
+            <div id="create" class="panel-body">
+                <form class="form-signin" action="/login" method="post">
+                    <label for="inputName" class="sr-only">Desired username</label>
+                    <input name="username" id="inputName" class="form-control" placeholder="Username" required
+                           autofocus>
+
+                    <label for="password" class="sr-only">Room</label>
+                    <input name="password" id="password" class="form-control" placeholder="Password" required>
+
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+                </form>
+            </div>
+        </div>
+</body>
+</html>
