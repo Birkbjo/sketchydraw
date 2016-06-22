@@ -7,16 +7,18 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var server = require('http').Server(app);
+
 var sio = exports.io = require('socket.io').listen(server);
 var util = require('util');
 
-
 //Port to listen to
 var port = require('../public/resources/js/setup.json').port;
+
 var sessionMiddleware = session({
     secret: 'abcd',
     resave: 'false',
-    saveUninitialized: 'false'
+    saveUninitialized: 'false',
+    cookie: {maxAge: 24 * 60 * 60 * 1000 }
 });
 
 app.use(cookieParser());

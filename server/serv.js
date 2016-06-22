@@ -2,11 +2,14 @@
 var exports = module.exports = {};
 
 var setup = require('./setup.js');
+var Room = require('./Room.js');
+var wordList = require('./words.js');
+
 var io = setup.io;
 //Get wordlist
-var wordList = require('./words.js');
 var wordArr = wordList.words;
 console.log("Word count: "+wordArr.length);
+
 //Listen to console-input
 var stdin = process.openStdin();
 stdin.on("data",function(d) {
@@ -17,20 +20,7 @@ var MAXCON = 20;
 var rooms = {};
 exports.rooms = rooms;
 
-function Room(data) {
-	this.users =  {};
-	this.turn = 0;
-	this.usernames = [];
-	this.currWord = null;
-	this.currDrawer = null;
-	this.roundTimeout;
-	this.hintInterval = -1;
-	this.nrUsersGuessed = 0;
-	if(data.roompass) {
-		console.log("password: "+ data.roompass);
-		this.password = data.roompass;
-	}
-}
+
 function createRoom(room,data,socket) {
 	if(room == null) {
 		console.log("Room name is null, abort");
@@ -48,7 +38,9 @@ io.sockets.on('connection', function (socket) {
     console.log("Connected: " + clientIp);
 
     socket.on('mousemove', function (data) {
-        socket.broadcast.to(socket.roomid).emit('moving',data);
+		if(rooms[socket.roomid].isDrawer(socket.id)) {
+			socket.broadcast.to(socket.roomid).emit('moving',data);
+		}
     });
     
   socket.on('adduser',function(data) {
@@ -109,8 +101,8 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('startgame',function(data) {
-		var leader = rooms[socket.roomid].usernames[0];
-    	if(!(socket.id === rooms[socket.roomid].users[leader].usock || rooms[socket.roomid].currWord != null)) return;
+		console.log(rooms[socket.roomid].getLeader());
+    	if(!(socket.id === rooms[socket.roomid].getLeader().usock || rooms[socket.roomid].currWord != null)) return;
     	rooms[socket.roomid].turn = 0;
     	startRound(socket);
     });
@@ -130,12 +122,10 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('stopgame',function(data){
-    	/*	console.log('stopping');
-    		clearInterval(hintInterval);
-    		clearTimeout(roundTimeout);
-    		turn = 0;
-    		io.sockets.emit('endround'); */
-    		endGame(socket);
+		var room = rooms[socket.roomid];
+		if(socket.id === room.getLeader().usock && room.currWord != null) {
+			endGame(socket);
+		}
     });
 
     socket.on('disconnect',function() {

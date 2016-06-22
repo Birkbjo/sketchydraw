@@ -19,8 +19,6 @@ function routes(app) {
             res.redirect("/main");
         }
         res.sendFile(path.join(__dirname,"../public/login/index.html"));
-      // req.session.views++;
-     //  console.log(req.session);
     });
 
     app.get("/logout",function(req,res) {
@@ -39,6 +37,7 @@ function routes(app) {
         //   authenticate()
         req.session.regenerate(function () {
             req.session.username = req.body.username;
+            req.session.password = req.body.roomPassword;
             res.cookie('name', req.body.username, {maxAge: SESSION_TIME, path: '/'});
             res.cookie('room', req.body.room, {maxAge: SESSION_TIME, path: '/'});
             res.redirect('/main');
