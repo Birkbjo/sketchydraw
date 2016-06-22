@@ -79,7 +79,7 @@ io.sockets.on('connection', function (socket) {
         console.log("Leader of " + socket.roomid + " " + rooms[socket.roomid].getLeader().name);
         if (!(socket.id === rooms[socket.roomid].getLeader().usock || rooms[socket.roomid].currWord != null)) return;
         rooms[socket.roomid].turn = 0;
-        startRound(socket);
+        rooms[socket.roomid].startRound(socket);
     });
 
     socket.on('chatmessage', function (msg) {
@@ -87,7 +87,7 @@ io.sockets.on('connection', function (socket) {
         console.log(rooms[socket.roomid].getLeader());
         var currWord = rooms[socket.roomid].currWord;
         if (currWord != null && msg.msg.toLowerCase() == currWord.toLowerCase()) {
-            guessedCorrectly(socket, msg);
+            rooms[socket.roomid].guessedCorrectly(socket, msg);
         }
         else {
             io.to(socket.roomid).emit('chat', msg);
@@ -98,7 +98,7 @@ io.sockets.on('connection', function (socket) {
     socket.on('stopgame', function (data) {
         var room = rooms[socket.roomid];
         if (socket.id === room.getLeader().usock && room.currWord != null) {
-            endGame(socket);
+            rooms[socket.roomid].endGame(socket);
         }
     });
 
@@ -157,7 +157,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('refreshsessionlist', function () {
         var list = [];
-        for (id in rooms) {
+        for (var id in rooms) {
 
             list.push({
                 'name': id,
@@ -173,7 +173,7 @@ io.sockets.on('connection', function (socket) {
 
 function updatesessionlist(socket) {
     var list = [];
-    for (id in rooms) {
+    for (var id in rooms) {
 
         list.push({
             'name': id,

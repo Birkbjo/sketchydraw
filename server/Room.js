@@ -144,7 +144,7 @@ Room.prototype.prepareRound = function(socket) {
         var msg = {'uname': "Next round", 'msg': user.name + " is drawing!"};
         io.to(socket.roomid).emit('chat', msg);
         //io.sockets.emit('chat',msg);
-        var sock = io.to(users[usernames[turn].usock]);
+        var sock = io.to(user.usock);
         this.startRound(socket);
     }
 }
@@ -155,7 +155,7 @@ Room.prototype.startRound = function (socket) {
 
     this.currDrawer = this.getThisTurnUser();
     var data = {'drawer': this.currDrawer.secureUserObject(), 'time:': ROUNDTIMER, 'words': wordRound};
-    console.log(room + ": " + " turn " + turn);
+    console.log(socket.roomid + ": " + " turn " + this.turn);
     if (this.currDrawer) {
         this.currDrawer.correct = true; //mark as guessed so that no points are given
         io.to(this.currDrawer.usock).emit('yourturn', data);
@@ -199,16 +199,24 @@ Room.prototype.startGuess = function (socket, word) {
 //Socket is the socket of the currently drawing user.
 Room.prototype.giveHints = function (word, socket) {
     var chars = word.split("");
+    var len = chars.length;
     var times = Math.floor(chars.length / 2);
     var spIndex = findSpaces(word);
+    chars = chars.map(function(val,ind) {
+        var obj = {};
+        obj.val = val
+        obj.orgIndex = ind;
+        return obj;
+    });
+    console.log(chars);
     for (var i = 0; i < spIndex.length; i++) {
         chars.splice(spIndex[i],1);
     }
-    var data = {'leng': chars.length, 'spaceInd': spIndex};
+    var data = {'leng': len, 'spaceInd': spIndex};
     socket.broadcast.to(socket.roomid).emit('hintlength', data);
-    var interval = (ROUNDTIMER) / chars.length;
+    var interval = (ROUNDTIMER) / len;
     var count = 0;
-    console.log("interval: " + interval + " word length" + chars.length + " times: " + times);
+    console.log("interval: " + interval + " word length" + len + " times: " + times);
 //ar hintInterval = this.hintInterval;
     this.hintInterval = setInterval(function () {
         if (count >= times) {
@@ -217,9 +225,10 @@ Room.prototype.giveHints = function (word, socket) {
         }
         var hint = (function() {
             var ind = Math.floor(Math.random() * chars.length);
-            var char = chars[ind];
+            var char = chars[ind].val;
+            var orgInd = chars[ind].orgIndex;
             chars.splice(ind,1);
-            return {'char': char, 'index': ind};
+            return {'char': char, 'index': orgInd};
         })();
         console.log("Hint is " + hint.char + " index " + hint.index);
         socket.broadcast.to(socket.roomid).emit('hint',hint);
@@ -256,7 +265,7 @@ Room.prototype.updateScores = function () {
 
 Room.prototype.guessedCorrectly = function(socket, msg) {
     var user = this.getUser();
-    if (users.correct != true) {
+    if (user.correct != true) {
         this.nrUsersGuessed++;
 
         console.log(msg.uname + " got it right! ");
