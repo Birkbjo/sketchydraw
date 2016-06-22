@@ -84,7 +84,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('chatmessage', function (msg) {
         console.log(msg.uname + " : " + msg.msg + "--- to " + socket.roomid);
-        console.log(rooms[socket.roomid].leader());
+        console.log(rooms[socket.roomid].getLeader());
         var currWord = rooms[socket.roomid].currWord;
         if (currWord != null && msg.msg.toLowerCase() == currWord.toLowerCase()) {
             guessedCorrectly(socket, msg);

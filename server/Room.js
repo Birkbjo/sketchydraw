@@ -116,7 +116,10 @@ Room.prototype.getDrawer = function () {
 }
 
 Room.prototype.isDrawer = function (socket) {
-    return socket.id === this.currDrawer.usock;
+    if(this.currDrawer) {
+        return socket.id === this.currDrawer.usock;
+    }
+    return false;
 }
 
 Room.prototype.endGame = function (socket) {
@@ -162,16 +165,16 @@ Room.prototype.startRound = function (socket) {
     }
 }
 
-Room.prototype.endRound = function (socket) {
+Room.prototype.endRound = function(socket) {
     //console.log(this.hintInterval);
     clearInterval(this.hintInterval);
-    this.turn = this.turn == this.turnQueue.length -1 ? 0 : i+1;
+    this.turn = this.turn == this.turnQueue.length -1 ? 0 : this.turn+1;
 
-    var msg = {'uname': "Round ended", 'msg': "The word was: " + currWord};
+    var msg = {'uname': "Round ended", 'msg': "The word was: " + this.currWord};
     io.to(socket.roomid).emit("chat", msg);
     this.currWord = null;
     for (var key in this.users) {
-        console.log(this.users[key].name + " score: " + thisusers[key].score);
+        console.log(this.users[key].name + " score: " + this.users[key].score);
         this.users[key].correct = false;
     }
     io.to(socket.roomid).emit('endround');
@@ -186,35 +189,40 @@ Room.prototype.startGuess = function (socket, word) {
         'drawer': this.getThisTurnUser().secureUserObject(),
         'time': ROUNDTIMER
     });
-    this.giveHint(this.currWord, socket);
+    this.giveHints(this.currWord, socket);
+    var room = this;
     this.roundTimeout = setTimeout(function () {
-        this.endRound(socket);
+        room.endRound(socket);
     }, ROUNDTIMER);
 }
 
-Room.prototype.giveHint = function (word, socket) {
-    var words = word.split("");
-    var wordsGiven = [];
-    var times = Math.floor(words.length / 2);
+//Socket is the socket of the currently drawing user.
+Room.prototype.giveHints = function (word, socket) {
+    var chars = word.split("");
+    var times = Math.floor(chars.length / 2);
     var spIndex = findSpaces(word);
-    console.log(spIndex.toString());
     for (var i = 0; i < spIndex.length; i++) {
-        wordsGiven.push(spIndex[i]);
+        chars.splice(spIndex[i],1);
     }
-    var data = {'leng': words.length, 'spaceInd': spIndex};
+    var data = {'leng': chars.length, 'spaceInd': spIndex};
     socket.broadcast.to(socket.roomid).emit('hintlength', data);
-    var interval = (ROUNDTIMER) / words.length;
+    var interval = (ROUNDTIMER) / chars.length;
     var count = 0;
-    console.log("interval: " + interval + " word length" + words.length + " times: " + times);
+    console.log("interval: " + interval + " word length" + chars.length + " times: " + times);
 //ar hintInterval = this.hintInterval;
     this.hintInterval = setInterval(function () {
         if (count >= times) {
             clearInterval(this.hintInterval);
             return;
         }
-        var hint = randomHint(wordsGiven, words);
+        var hint = (function() {
+            var ind = Math.floor(Math.random() * chars.length);
+            var char = chars[ind];
+            chars.splice(ind,1);
+            return {'char': char, 'index': ind};
+        })();
         console.log("Hint is " + hint.char + " index " + hint.index);
-        shareHint(hint.char, hint.index, socket);
+        socket.broadcast.to(socket.roomid).emit('hint',hint);
         count++;
     }, interval);
 }
@@ -284,4 +292,12 @@ function getRandomWords() {
     var rindex3 = Math.floor(Math.random() * (high));
     var arr = [wordArr[rindex], wordArr[rindex2], wordArr[rindex3]];
     return arr;
+}
+
+function findSpaces(word) {
+    var spaces = [];
+    for (var i = 0; i < word.length; i++) {
+        if (word[i] === ' ') spaces.push(i);
+    }
+    return spaces;
 }
