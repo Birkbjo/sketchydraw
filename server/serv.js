@@ -84,7 +84,6 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('chatmessage', function (msg) {
         console.log(msg.uname + " : " + msg.msg + "--- to " + socket.roomid);
-        console.log(rooms[socket.roomid].getLeader());
         var currWord = rooms[socket.roomid].currWord;
         if (currWord != null && msg.msg.toLowerCase() == currWord.toLowerCase()) {
             rooms[socket.roomid].
@@ -193,7 +192,7 @@ function cmdStatus(cmds) {
         console.log(" Users: (" + rooms[ident].turnQueue.length + ")");
         for (uident in rooms[ident].users) {
             var userOut = rooms[ident].users[uident];
-            console.log("  " + uident + ": id " + userOut.id + ", usock " + userOut.usock + ", score " + userOut.score + ", correct " + userOut.correct);
+            console.log("  " + userOut.name + ": id " + userOut.id + ", usock " + userOut.usock + ", score " + userOut.score + ", correct " + userOut.correct);
         }
     }
 }

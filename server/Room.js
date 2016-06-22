@@ -265,8 +265,8 @@ Room.prototype.updateScores = function () {
 }
 
 Room.prototype.guessedCorrectly = function(socket, msg) {
-    var user = this.getUser();
-    if (user.correct != true) {
+    var user = this.getUser(socket.id);
+    if (!user.correct) {
         this.nrUsersGuessed++;
 
         console.log(msg.uname + " got it right! ");
@@ -284,9 +284,9 @@ Room.prototype.guessedCorrectly = function(socket, msg) {
         io.to(socket.roomid).emit('updatescore', user.secureUserObject());
         io.to(socket.roomid).emit('updatescore', this.currDrawer.secureUserObject());
     }
-    if (nrUsersGuessed == this.nrOfUsers()) {
+    if (this.nrUsersGuessed == this.nrOfUsers()-1) {
         console.log("All guessed, new round");
-        allGuessedCorrectly(socket);
+        this.allGuessedCorrectly(socket);
     }
 }
 
