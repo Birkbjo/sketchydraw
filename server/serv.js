@@ -26,7 +26,7 @@ function createRoom(room, data, socket) {
         io.to(socket.id).emit('disconnect', 5);
         return false;
     }
-    data.roompass = socket.request.session.roomPassword;
+    data.roompass = socket.request.session.roomPassword || null;
     rooms[room] = new Room(data);
     return true;
 }
@@ -38,7 +38,7 @@ io.sockets.on('connection', function (socket) {
     console.log("Connected: " + clientIp);
 
     socket.on('mousemove', function (data) {
-        if (rooms[socket.roomid].isDrawer(socket.id)) {
+        if (rooms[socket.roomid].isDrawer(socket)) {
             socket.broadcast.to(socket.roomid).emit('moving', data);
         }
     });
@@ -70,13 +70,13 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('clear', function (data) {
-        if(rooms[socket.roomid].isDrawer()) {
+        if(rooms[socket.roomid].isDrawer(socket)) {
             socket.broadcast.to(socket.roomid).emit('clear', data);
         }
     });
 
     socket.on('startgame', function (data) {
-        console.log("Leader of " + socket.roomid + " " + rooms[socket.roomid].getLeader());
+        console.log("Leader of " + socket.roomid + " " + rooms[socket.roomid].getLeader().name);
         if (!(socket.id === rooms[socket.roomid].getLeader().usock || rooms[socket.roomid].currWord != null)) return;
         rooms[socket.roomid].turn = 0;
         startRound(socket);
@@ -107,8 +107,10 @@ io.sockets.on('connection', function (socket) {
             //socket.emit('disconnect');
             return;
         }
+        rooms[socket.roomid].disconnectUser(socket);
+        return;
         var users = rooms[socket.roomid].users;
-
+        console.log("disconnect " + socket.name);
         var usernames = rooms[socket.roomid].turnQueue;
         var currDrawer = rooms[socket.roomid].currDrawer;
         var i = usernames.indexOf(socket.name);
@@ -183,7 +185,7 @@ function updatesessionlist(socket) {
     io.emit('updatesessionlist', list);
 }
 
-function tearDownRoom(socket) {
+var tearDownRoom = function (socket) {
     delete rooms[socket.roomid];
 }
 
@@ -298,7 +300,8 @@ function startRound(socket) {
     var wordRound = getRandomWords();
     var turn = rooms[room].turn;
     var thisTurnDrawer = rooms[room].turnQueue[turn];
-    rooms[room].currDrawer = thisTurnDrawer;
+    rooms[room].currDrawer = rooms[room].getUser(thisTurnDrawer);
+    console.log(rooms[room].currDrawer);
     var data = {'drawer': thisTurnDrawer, 'time:': ROUNDTIMER, 'words': wordRound};
     console.log(room + ": " + " turn " + turn);
     if (rooms[room].users[thisTurnDrawer]) {
@@ -421,3 +424,5 @@ function cmdStatus(cmds) {
         }
     }
 }
+
+exports.tearDownRoom = tearDownRoom;

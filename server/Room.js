@@ -17,7 +17,7 @@ function Room(data) {
     this.hintInterval = -1;
     this.nrUsersGuessed = 0;
     this.password = null;
-    if (data.roompass.length > 0) {
+    if (data.roompass) {
         console.log("password: " + data.roompass);
         this.password = data.roompass;
     }
@@ -31,7 +31,7 @@ function User(socket, data) {
     this.correct = false;
 }
 
-User.prototype.secureUserObject = function() {
+User.prototype.secureUserObject = function () {
     return {
         'name': this.name,
         'correct': this.correct,
@@ -40,10 +40,10 @@ User.prototype.secureUserObject = function() {
 }
 
 //Used to strip out sensitive user info before sending.
-Room.prototype.secureUsers = function() {
+Room.prototype.secureUsers = function () {
     var payload = {};
     var i = 0;
-    for(var key in this.users) {
+    for (var key in this.users) {
         payload[i++] = this.users[key].secureUserObject();
     }
     return payload;
@@ -65,7 +65,7 @@ Room.prototype.addUser = function (socket, data) {
         socket.join(data.room);
         socket.roomid = data.room;
         this.turnQueue.push(socket.id);
-        var user = new User(socket,data);
+        var user = new User(socket, data);
         this.users[user.usock] = user;
         //Store room in session
         socket.request.session.room = data.room;
@@ -104,7 +104,7 @@ Room.prototype.getDrawer = function () {
 }
 
 Room.prototype.isDrawer = function (socket) {
-    return socket.id === currDrawer.usock;
+    return socket.id === this.currDrawer.usock;
 }
 
 Room.prototype.endGame = function (socket) {
@@ -115,10 +115,10 @@ Room.prototype.endGame = function (socket) {
     this.nrUsersGuessed = 0;
     this.turn = -1;
     io.to(socket.roomid).emit('endround');
-    for (ident in room.users) {
-        room.users[ident].correct = false;
-        room.users[ident].score = 0;
-        io.to(socket.roomid).emit('updatescore', room.users[ident]);
+    for (var key in this.users) {
+        this.users[key].correct = false;
+        this.users[key].score = 0;
+        io.to(socket.roomid).emit('updatescore', this.users[key].secureUserObject());
     }
 
 }
@@ -137,7 +137,7 @@ Room.prototype.startRound = function (socket) {
         //io.sockets.socket(sid).emit('yourturn',data);
     } else {
         console.log("test turn = 0");
-        turn = 0;
+        this.turn = 0;
     }
 }
 
@@ -207,13 +207,62 @@ Room.prototype.giveHint = function (word, socket) {
 }
 
 Room.prototype.disconnectUser = function (socket) {
-
+    var i = this.turnQueue.indexOf(socket.id);
+    if (i >= 0) {
+        var user = this.getUser(socket.id);
+        delete this.users[socket.id];
+        this.turnQueue.splice(i, 1);
+        io.to(socket.roomid).emit('updateusers', this.secureUsers());
+        //io.sockets.emit('updateusers',users);
+        io.to(socket.roomid).emit('chat', {
+            'uname': user.name,
+            'msg': 'Has disconnected'
+        });
+        if (user == this.currDrawer) {
+            this.allGuessedCorrectly(socket);
+        }
+        if (this.turnQueue.length == 0) {
+            this.endGame(socket);
+            serv.tearDownRoom(socket);
+        }
+    }
 }
+
 
 Room.prototype.updateScores = function () {
 
 }
 
+Room.prototype.guessedCorrectly = function(socket, msg) {
+    var user = this.getUser();
+    if (users.correct != true) {
+        this.nrUsersGuessed++;
+
+        console.log(msg.uname + " got it right! ");
+        socket.emit('chat', msg);
+        msg.uname = "Congratulations, you got it right";
+        msg.msg = " the word was " + this.currWord;
+        socket.emit('chat', msg);
+        msg.uname = socket.name + " guessed correctly!"
+        msg.msg = "";
+        socket.broadcast.to(socket.roomid).emit('chat', msg);
+        user.score += 10;
+        user.correct = true;
+        this.currDrawer.score += 5;
+
+        io.to(socket.roomid).emit('updatescore', user.secureUserObject());
+        io.to(socket.roomid).emit('updatescore', this.currDrawer.secureUserObject());
+    }
+    if (nrUsersGuessed == this.nrOfUsers()) {
+        console.log("All guessed, new round");
+        allGuessedCorrectly(socket);
+    }
+}
+
+Room.prototype.allGuessedCorrectly = function(socket) {
+    clearTimeout(this.roundTimeout);
+    this.endRound(socket);
+}
 
 function getRandomWords() {
     var high = wordArr.length;
