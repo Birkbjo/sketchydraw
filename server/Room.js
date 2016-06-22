@@ -122,6 +122,7 @@ Room.prototype.isDrawer = function (socket) {
     return false;
 }
 
+
 Room.prototype.endGame = function (socket) {
     clearTimeout(this.roundTimeout);
     clearInterval(this.hintInterval);
@@ -208,7 +209,7 @@ Room.prototype.giveHints = function (word, socket) {
         obj.orgIndex = ind;
         return obj;
     });
-    console.log(chars);
+
     for (var i = 0; i < spIndex.length; i++) {
         chars.splice(spIndex[i],1);
     }

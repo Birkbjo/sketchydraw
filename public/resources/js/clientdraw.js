@@ -305,7 +305,8 @@ function connect(name,room,pass,url) {
 
 
     function endRound() {
-         allowed = false;
+        allowed = false;
+        $('#paper').css('cursor',"auto");
         timer = -1;
         $('#timeRound').text(0);
         $('hintwords').empty();
@@ -344,6 +345,7 @@ function connect(name,room,pass,url) {
 
     function selectWord(data) {
         $('#paper').fadeTo("slow",0.2);
+        $('#paper').css('cursor',"url('http://www.rw-designer.com/cursor-extern.php?id=77946'),auto");
         var words = data.words;
         var $overlay = $('#turnoverlay');
         //$overlay.css('display','block');
