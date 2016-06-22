@@ -95,7 +95,7 @@ Room.prototype.getThisTurnUser = function() {
 }
 
 Room.prototype.getUserByName = function (name) {
-    for (id in this.users) {
+    for (var id in this.users) {
         if (this.users[id].name === name) {
             return this.users[id];
         }

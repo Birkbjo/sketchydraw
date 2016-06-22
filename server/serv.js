@@ -170,12 +170,13 @@ function cmdKickUser(cmds) {
     if (cmds[1]) {
         var room = cmds[1];
         if (cmds[2]) {
-            var user = cmds[2];
-            console.log(room + " " + user + ".")
+            var userName = cmds[2];
+            console.log("kick in " + room +" user " + userName + ".");
             if (rooms[room]) {
-                if (rooms[room].users[user]) {
-                    console.log("kicking user");
-                    io.to(rooms[room].users[user].usock).emit('disconnect', 1);
+                var user = rooms[room].getUserByName(userName);
+                if (user) {
+                    console.log("kicking user: " + user.name);
+                    io.to(user.usock).emit('disconnect', 1);
                 }
             }
         }
@@ -183,14 +184,14 @@ function cmdKickUser(cmds) {
 }
 
 function cmdStatus(cmds) {
-    for (ident in rooms) {
+    for (var ident in rooms) {
         console.log("### Room " + ident + " ###");
         console.log(" Turn " + rooms[ident].turn);
         console.log(" currWord: " + rooms[ident].currWord);
         console.log(" currDrawer: " + rooms[ident].currDrawer);
         console.log(" nrUsersGuessed " + rooms[ident].nrUsersGuessed);
         console.log(" Users: (" + rooms[ident].turnQueue.length + ")");
-        for (uident in rooms[ident].users) {
+        for (var uident in rooms[ident].users) {
             var userOut = rooms[ident].users[uident];
             console.log("  " + userOut.name + ": id " + userOut.id + ", usock " + userOut.usock + ", score " + userOut.score + ", correct " + userOut.correct);
         }
