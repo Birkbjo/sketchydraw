@@ -243,7 +243,6 @@ function connect(name,room,pass,url) {
         drawing = false;
     });
     socket.on('disconnect',function(err) {
-        console.log(err);
         logout(err);
     });
 

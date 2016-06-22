@@ -46,6 +46,8 @@ function getCookie(name) {
 }
 
 function logout(err) {
+    //firefox is closing socket with error message "transport close" before
+    //router gets a chance to redirect to login, prevent this by checking for this error
     if (!err) {
         location.href = "/logout/";
     } else if (err != "transport close"){
