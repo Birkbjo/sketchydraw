@@ -27,12 +27,18 @@ function Room(data) {
 function User(socket, data) {
     this.name = data.name;
     this.score = 0;
+    var uid= (function() {         //Id for the client to identify scores etc - not sensitive
+        var id = 0;
+        return function() {return id++};
+    })();
+    this.id = uid();
     this.usock = socket.id;
     this.correct = false;
 }
 
 User.prototype.secureUserObject = function () {
     return {
+        'id' : this.id,
         'name': this.name,
         'correct': this.correct,
         'score': this.score
