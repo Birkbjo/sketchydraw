@@ -1,11 +1,15 @@
 //Setup server
 var exports = module.exports = {};
-
 var setup = require('./setup.js');
+
+var sio = setup.io;
+var io = sio.of('/rooms');
+exports.io = io;
+
 var Room = require('./Room.js');
 var wordList = require('./words.js');
 
-var io = setup.io;
+
 //Get wordlist
 var wordArr = wordList.words;
 console.log("Word count: " + wordArr.length);
@@ -54,7 +58,7 @@ function connectUser(socket) {
 }
 
 // Listen for incoming connections from clients
-io.sockets.on('connection', function (socket) {
+io.on('connection', function (socket) {
 
     var clientIp = socket.request.connection.remoteAddress;
     console.log("Connected: " + clientIp);
@@ -118,6 +122,12 @@ io.sockets.on('connection', function (socket) {
 
     });
 
+
+});
+
+var loginIo = sio.of('/login');
+loginIo.on('connection',function(socket) {
+    console.log("New login hit");
     socket.on('refreshsessionlist', function () {
         var list = [];
         for (var id in rooms) {
@@ -129,10 +139,9 @@ io.sockets.on('connection', function (socket) {
             });//end push
         }
         ;
-        io.to(socket.id).emit('updatesessionlist', list);
+        loginIo.to(socket.id).emit('updatesessionlist', list);
     });
 });
-
 
 function updatesessionlist(socket) {
     var list = [];
@@ -145,7 +154,7 @@ function updatesessionlist(socket) {
         });//end push
     }
     ;
-    io.emit('updatesessionlist', list);
+    loginIo.emit('updatesessionlist', list);
 }
 
 var tearDownRoom = function (socket) {

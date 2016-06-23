@@ -1,6 +1,6 @@
 var wordList = require('./words.js');
-var io = require('./setup.js').io;
 var serv = require('./serv.js');
+var io = serv.io;
 var ROUNDTIMER = 60000;
 var MAXCON = 20;
 var wordArr = wordList.words;

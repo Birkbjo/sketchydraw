@@ -8,8 +8,7 @@ var myCookie = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^
 
 
 function establish(port) {
-	var url = window.location.hostname+":"+port;
-	console.log("Connecting to "+url);
+	var url = window.location.hostname+":"+port+"/login";
 	socket = io.connect(url);
 	listenEvents(socket);	
 }
