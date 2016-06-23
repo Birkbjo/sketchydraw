@@ -110,12 +110,15 @@ input[type="button"]:disabled {
 }
 #connectedUsers {
 	font-size:16px;
-	width:100px;
+	width:170px;
 	margin:0 auto 15px auto;
 	text-align: left;
 }
 #connectedUsers span {
 	margin-left:10px;
+}
+#connectedUsers li {
+
 }
 
 #paper {

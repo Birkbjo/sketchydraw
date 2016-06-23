@@ -47,17 +47,16 @@ function connect(name,room,pass,url) {
     var allowed = false;
     var clients = {};
     var cursors = {};
-  //  var room = prompt("Type a room to enter","Default");
+    var user;
     var socket = io.connect(url);
     socket.on('connect',function() {
-        socket.emit("adduser", {
-            'id': id,
-            'name':name,
-            'room':room,
-            'roompass':pass
-        });
-    });
 
+    });
+    socket.on('connected',function(data) {
+
+        user = data;
+        console.dir(user);
+    });
     socket.on('updateusers',function(users) {
         $('#connectedUsers').empty();
         var first,count = 0;
@@ -68,16 +67,11 @@ function connect(name,room,pass,url) {
             $('#connectedUsers').append($('<li id='+users[ident].id+'>').html(users[ident].name +"<span>"+users[ident].score+"</span>"));
             count++;
         }
-     //   for(var i = 0;i<users.length;i++) {
-        if(name == first && timer < 0) {
+        if(user.name == first && timer < 0) {
             $('#btnStart').attr("disabled",false);
         } else {
             $('#btnStart').attr("disabled",true);
         }
-       /* $.each(users,function(key,value) {
-            first = 
-            $('#connectedUsers').append($('<li>').text(value));
-        }); */
     });
 
 
@@ -113,7 +107,7 @@ function connect(name,room,pass,url) {
         var msg = $('#inputChat').val().trim();
         if(msg === '') return false;
         socket.emit('chatmessage',{
-            'uname':name,
+            'uname':user.name,
             'msg':msg
         });
         $('#inputChat').val('');
@@ -201,7 +195,7 @@ function connect(name,room,pass,url) {
         $('#hintwords').empty();
         for(var i = 0;i<data.leng;i++) {
             if(data.spaceInd.indexOf(i) >= 0) {
-                $('#hintwords').append(" ");
+                $('#hintwords').append("  ");
                 data.spaceInd.splice(i,1);
             } else {
                 $('#hintwords').append("_");

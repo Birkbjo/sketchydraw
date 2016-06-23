@@ -34,15 +34,24 @@ function User(socket, data) {
     this.id = uid();
     this.usock = socket.id;
     this.correct = false;
+    this.room = data.wantedRoom;
 }
 
 User.prototype.secureUserObject = function () {
     return {
         'id' : this.id,
         'name': this.name,
+        'room': this.room,
         'correct': this.correct,
         'score': this.score
     }
+}
+
+User.prototype.send = function(event,data) {
+    if(typeof event != 'string') {
+        return false;
+    }
+    io.to(this.usock).emit(event,data);
 }
 
 //Used to strip out sensitive user info before sending.
@@ -56,9 +65,10 @@ Room.prototype.secureUsers = function () {
 }
 
 Room.prototype.addUser = function (socket, data) {
+    var user;
     if (this.password) {
         console.log("Has password");
-        if (this.password != socket.request.session.roomPassword) {
+        if (this.password != socket.request.session.user.roomPassword) {
             io.to(socket.id).emit('disconnect', 2);
             return false;
         }
@@ -69,13 +79,14 @@ Room.prototype.addUser = function (socket, data) {
         return false;
     }
     if (!(this.getUserByName(data.name))) {
-        socket.join(data.room);
-        socket.roomid = data.room;
+        socket.join(data.wantedRoom);
+        socket.roomid = data.wantedRoom;
         this.turnQueue.push(socket.id);
-        var user = new User(socket, data);
+        user = new User(socket, data);
         this.users[user.usock] = user;
         //Store room in session
-        socket.request.session.room = data.room;
+        socket.request.session.joinedRoom = data.wantedRoom;
+        user.send('connected',user.secureUserObject());
         io.to(socket.roomid).emit('updateusers', this.secureUsers());
 
     } else { //name in use
@@ -83,7 +94,7 @@ Room.prototype.addUser = function (socket, data) {
         io.to(socket.id).emit('disconnect', 4);
         return false;
     }
-    return true;
+    return user;
 }
 
 Room.prototype.getUser = function (id) {
@@ -274,7 +285,7 @@ Room.prototype.guessedCorrectly = function(socket, msg) {
         msg.uname = "Congratulations, you got it right";
         msg.msg = " the word was " + this.currWord;
         socket.emit('chat', msg);
-        msg.uname = socket.name + " guessed correctly!"
+        msg.uname = socket.user.name + " guessed correctly!"
         msg.msg = "";
         socket.broadcast.to(socket.roomid).emit('chat', msg);
         user.score += 10;
