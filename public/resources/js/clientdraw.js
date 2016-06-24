@@ -10,10 +10,13 @@ $("#btnJoin").on("click",function() {
       }
     
   }); */
+window.onload = function() { //firefox scoketio bug fix
+
+};
 $(function() {
-    $('#overlay').remove();
+    //  $('#overlay').remove();
     setUp();
-    
+
 });
 
 // Get The URL and portof your web server (the port is set in setup.json)
@@ -29,8 +32,6 @@ function connect(name,room,pass,url) {
         alert('Sorry, it looks like your browser does not support canvas!');
         return false;
     }
-    if(getCookie('name') == false) return;
-    
 
     var doc = $(document),
         win = $(window),
@@ -49,6 +50,7 @@ function connect(name,room,pass,url) {
     var cursors = {};
     var user;
     var socket = io.connect(url);
+
     socket.on('connect',function() {
 
     });

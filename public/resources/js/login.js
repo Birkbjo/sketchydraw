@@ -1,9 +1,12 @@
 var socket;
 printerr(getUrlParameter('err'));
-$.getJSON('../resources/js/setup.json',function(data) {
-	establish(data.port);
-	refreshLive();
-});
+window.onload = function() { //firefox scoketio bug fix
+	$.getJSON('../resources/js/setup.json',function(data) {
+		establish(data.port);
+		refreshLive();
+	});
+}
+
 var myCookie = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1");
 
 

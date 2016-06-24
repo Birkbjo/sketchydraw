@@ -1,16 +1,12 @@
 //check();
 var pickedcolor = 'black';
 var pickedsize = 3;
-/*
+
 window.onload = function () {
-    var username = getCookie('name');
-    var room = getCookie('room');
-    if (username == false && room) {
-        username = promptUsername();
-    }
-    check();
+ 
+    //check();
     //	document.getElementById('rangesize').value = pickedsize;
-} */
+}
 
 function check(err) {
     //alert(getCookie('name'))
