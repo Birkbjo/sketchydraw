@@ -3,7 +3,7 @@ var pickedcolor = 'black';
 var pickedsize = 3;
 
 window.onload = function () {
- 
+
     //check();
     //	document.getElementById('rangesize').value = pickedsize;
 }

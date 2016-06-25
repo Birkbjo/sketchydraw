@@ -32,7 +32,6 @@ input[type="button"]:hover,button:hover,#words li:hover {
 }
 input[type="button"]:active,button:active,#words li:active {
 	background-color:#455A64;
-	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 input[type="button"]:disabled {
 	color:#CFD8DC;
@@ -154,7 +153,7 @@ input[type="button"]:disabled {
 	padding:2px;
 	height:50px;
 	width:200px;
-	background-color: #78909C;
+	background-color: #4e5d6c;
     box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);
 	font-size:1em;
 	top:10px;
