@@ -32,8 +32,6 @@ function routes(app) {
             if (err) {
                 console.log(err);
             } else {
-              //  res.clearCookie('name');
-           //     res.clearCookie('room');
                 if(req.query.err) {
                     res.redirect("/login?err="+req.query.err);
                 } else {

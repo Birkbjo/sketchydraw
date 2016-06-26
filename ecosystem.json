@@ -12,7 +12,7 @@
   apps : [
     {
       name: "SketchyDraw",
-      cwd: "./server/",
+      cwd: "./server",
       script: "serv.js",
       env_production: {
         NODE_ENV: "production"
