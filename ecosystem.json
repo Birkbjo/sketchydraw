@@ -1,0 +1,32 @@
+{
+  /**
+   * This is a sample configuration file for PM2
+   */
+
+  /**
+   * Here we declare the apps that must be managed by PM2
+   * All options are listed here:
+   * https://github.com/Unitech/PM2/blob/master/ADVANCED_README.md#json-app-declaration
+   *
+   */
+  apps : [
+    {
+      name: "SketchyDraw",
+      cwd: "./server/",
+      script: "serv.js",
+      env_production: {
+        NODE_ENV: "production"
+      }
+    }
+  ],
+  deploy : {
+    production : {
+      user : "node",
+      host : "localhost",
+      ref  : "origin/sessions",
+      repo : "github.com/Birkbjo/sketchydraw.git",
+      path : "C:\wamp\www\sketchydraw",
+      "post-deploy" : "npm install && pm2 startOrRestart ecosystem.json --env production"
+    }
+  }
+}
