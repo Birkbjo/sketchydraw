@@ -17,6 +17,7 @@ function Room(data) {
     this.hintInterval = -1;
     this.nrUsersGuessed = 0;
     this.password = null;
+    this.clientUid = 0;
     if (data.roompass) {
         console.log("password: " + data.roompass);
         this.password = data.roompass;
@@ -27,7 +28,7 @@ function Room(data) {
 function User(socket, data,room) {
     this.name = data.name;
     this.score = 0;
-    this.id = room.nrOfUsers(); //Id for the client to identify scores etc - not sensitive
+    this.id = room.clientUid++; //Id for the client to identify scores etc - not sensitive
     this.usock = socket.id;
     this.correct = false;
     this.room = data.wantedRoom;

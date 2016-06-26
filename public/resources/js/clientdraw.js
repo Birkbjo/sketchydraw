@@ -139,6 +139,7 @@ function connect(name,room,pass,url) {
             allowed = true;
             clearCanvas();
         }*/
+        $('#connectedUsers li').removeClass("icon-draw icon-success");
         setDrawer(turn.drawer);
         clearCanvas();
         timer = turn.time/1000;
@@ -166,8 +167,11 @@ function connect(name,room,pass,url) {
         
     });
     socket.on('updatescore',function(data) {
-        var userindex = data.index+1;
         $('#connectedUsers #'+data.id+' span').text(data.score);
+        if(data.id != drawer.id) {
+            $('#connectedUsers #'+data.id).addClass('icon-success');
+        }
+
     });
     
     socket.on('chat',function(msg) {
@@ -303,7 +307,7 @@ function connect(name,room,pass,url) {
         timer = -1;
         $('#timeRound').text(0);
         $('hintwords').empty();
-        $('#connectedUsers li').removeClass("icon-draw","icon-success");
+
         var $overlay = $('#turnoverlay');
         $overlay.hide(400);
             $('#paper').fadeTo("slow",1);
@@ -364,7 +368,7 @@ function connect(name,room,pass,url) {
 
 function setDrawer(user) {
     drawer = user;
-    $('#connectedUsers #'+user.id).toggleClass('icon-draw');
+    $('#connectedUsers #'+user.id).addClass('icon-draw');
 
 }
 
