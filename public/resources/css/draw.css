@@ -109,15 +109,17 @@ input[type="button"]:disabled {
 }
 #connectedUsers {
 	font-size:16px;
-	width:170px;
+	width:190px;
 	margin:0 auto 15px auto;
 	text-align: left;
 }
 #connectedUsers span {
-	margin-left:10px;
+	margin-top:5px;
+	float:right;
 }
 #connectedUsers li {
-
+	overflow:hidden;
+	list-style:none;
 }
 
 #paper {
@@ -197,6 +199,29 @@ input[type="button"]:disabled {
 }
 #words li:hover {
 	cursor:pointer;
+}
+
+
+.list-icon:before {
+	content:'';
+	display: inline-block;
+	height: 20px;
+	width: 20px;
+	background-image: url("../img/no.png");
+	background-repeat:no-repeat;
+	background-position-y: 3px;
+	background-size: contain;
+	margin-right:5px;
+}
+
+
+.icon-draw:before {
+	background-image: url("../img/pencil.png");
+
+
+}
+.icon-success:before {
+	background-image:url("../img/success.png");
 }
 
 .noselect {

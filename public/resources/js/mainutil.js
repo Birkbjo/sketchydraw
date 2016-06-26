@@ -4,25 +4,9 @@ var pickedsize = 3;
 
 window.onload = function () {
 
-    //check();
-    //	document.getElementById('rangesize').value = pickedsize;
 }
 
-function check(err) {
-    //alert(getCookie('name'))
-    if (getCookie('name') == false || getCookie('room') == false || getCookie('name') == "") {
-        delete_cookie('name');
-        delete_cookie('room');
-        delete_cookie('roompass');
-        if (err) {
-            location.href = "/login/?err=" + err;
-        } else {
-            location.href = "/login/";
-        }
 
-    }
-    //
-}
 function promptUsername() {
     var name = prompt("Desired username");
     if (name != null) {

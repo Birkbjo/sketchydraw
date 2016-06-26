@@ -24,17 +24,14 @@ function Room(data) {
 
 }
 
-function User(socket, data) {
+function User(socket, data,room) {
     this.name = data.name;
     this.score = 0;
-    var uid= (function() {         //Id for the client to identify scores etc - not sensitive
-        var id = 0;
-        return function() {return id++};
-    })();
-    this.id = uid();
+    this.id = room.nrOfUsers(); //Id for the client to identify scores etc - not sensitive
     this.usock = socket.id;
     this.correct = false;
     this.room = data.wantedRoom;
+
 }
 
 User.prototype.secureUserObject = function () {
@@ -82,7 +79,8 @@ Room.prototype.addUser = function (socket, data) {
         socket.join(data.wantedRoom);
         socket.roomid = data.wantedRoom;
         this.turnQueue.push(socket.id);
-        user = new User(socket, data);
+        user = new User(socket, data,this);
+        console.log(user.id);
         this.users[user.usock] = user;
         //Store room in session
         socket.request.session.joinedRoom = data.wantedRoom;
@@ -281,7 +279,7 @@ Room.prototype.guessedCorrectly = function(socket, msg) {
         this.nrUsersGuessed++;
 
         console.log(msg.uname + " got it right! ");
-        socket.emit('chat', msg);
+        socket.emit('chat', msg); //Todo own event for guessed
         msg.uname = "Congratulations, you got it right";
         msg.msg = " the word was " + this.currWord;
         socket.emit('chat', msg);

@@ -128,7 +128,6 @@ io.on('connection', function (socket) {
 
 var loginIo = sio.of('/login');
 loginIo.on('connection',function(socket) {
-    console.log("New login hit");
     socket.on('refreshsessionlist', function () {
         var list = [];
         for (var id in rooms) {

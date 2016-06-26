@@ -25,6 +25,7 @@ function setUp() {
         connect(getCookie('name'),getCookie('room'),getCookie('roompass'),window.location.hostname+":"+data.port+"/rooms");
     });
 }
+var user, drawer = -1;
 function connect(name,room,pass,url) {
     var timer = -1;
 //$(function(){
@@ -38,17 +39,14 @@ function connect(name,room,pass,url) {
         canvas = $('#paper'),
         btnClear = $('#clearPaper'),
         ctx = canvas[0].getContext('2d');
-
-    // Generate an unique ID
-
-    var id = Math.round($.now()*Math.random());
+    
 
     // A flag for drawing activity
     var drawing = false;
     var allowed = false;
     var clients = {};
     var cursors = {};
-    var user;
+
     var socket = io.connect(url);
 
     socket.on('connect',function() {
@@ -59,14 +57,21 @@ function connect(name,room,pass,url) {
         user = data;
         console.dir(user);
     });
-    socket.on('updateusers',function(users) {
+    socket.on('updateusers',function(users) { //todo use append only, no need to empty.
+        console.log(users);
         $('#connectedUsers').empty();
         var first,count = 0;
         for(ident in users) {
              if(count == 0) {
                 first = users[ident].name;
             }  
-            $('#connectedUsers').append($('<li id='+users[ident].id+'>').html(users[ident].name +"<span>"+users[ident].score+"</span>"));
+            var litem = $('<li class="list-icon" id='+users[ident].id+'>'+users[ident].name+'<span>0</span>').appendTo('#connectedUsers');
+            console.log(litem);
+            if(users[ident].id == drawer.id) {
+               litem.toggleClass('icon-draw');
+            } else if(users[ident.correct]) {
+               litem.toggleClass('icon-success');
+            }
             count++;
         }
         if(user.name == first && timer < 0) {
@@ -119,19 +124,13 @@ function connect(name,room,pass,url) {
     $('#btnStart').on("click",function() {
         $('#btnStop').attr("disabled",false);
         $('#btnStart').attr("disabled",true);
-        socket.emit('startgame', {
-            'uname':name,
-            'id':id,
-        });
+        socket.emit('startgame');
     });
 
     $('#btnStop').on('click',function() {
         $('#btnStop').attr("disabled",true);
         $('#btnStart').attr("disabled",false);
-        socket.emit('stopgame',{
-            'uname':name,
-            'id':id,
-        });
+        socket.emit('stopgame');
     });
 
     socket.on('startgame',function(turn) {
@@ -140,7 +139,7 @@ function connect(name,room,pass,url) {
             allowed = true;
             clearCanvas();
         }*/
-        
+        setDrawer(turn.drawer);
         clearCanvas();
         timer = turn.time/1000;
         $('#timeRound').text(timer);
@@ -279,8 +278,6 @@ function connect(name,room,pass,url) {
                 'x': e.pageX-$('#paper').offset().left,
                 'y': e.pageY-$('#paper').offset().top,
                 'drawing': drawing,
-                'id': id,
-                'name':name,
                 'pickedcolor':'#'+pickedcolor,
                 'pickedsize':pickedsize
             });
@@ -306,6 +303,7 @@ function connect(name,room,pass,url) {
         timer = -1;
         $('#timeRound').text(0);
         $('hintwords').empty();
+        $('#connectedUsers li').removeClass("icon-draw","icon-success");
         var $overlay = $('#turnoverlay');
         $overlay.hide(400);
             $('#paper').fadeTo("slow",1);
@@ -363,6 +361,17 @@ function connect(name,room,pass,url) {
     }
  
 }
+
+function setDrawer(user) {
+    drawer = user;
+    $('#connectedUsers #'+user.id).toggleClass('icon-draw');
+
+}
+
+function userGuessed(user) { //todo implement user-guessed event
+
+}
+
 String.prototype.replaceAt=function(index, char) {
     return this.substr(0, index) + char + this.substr(index+char.length);
 }  

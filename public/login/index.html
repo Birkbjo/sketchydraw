@@ -1,7 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,75 +21,77 @@
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
-  </head>
+</head>
 
-  <body>
-    <div class="container">
-      <img class="img-responsive" src="../resources/img/logo.png" alt="Pencil">
-      <div class="well"> Create a room, have friends join and laugh at each others drawings.</div>
-      <div id="errmsg"></div>
-      <div class="panel-group">
-        <div  class="panel panel-primary">
-          <div class="panel-heading" data-toggle="collapse" data-target="#create">Create or join a lobby</div>
-          <div id="create" class="panel-body" >
-            <form class="form-signin" action="/login" method="post">
-              <label for="inputName"  class="sr-only">Desired username</label>
-              <input name="username" id="inputName" maxlength="14" class="form-control" placeholder="Username" required autofocus>
+<body>
+<div class="container">
+    <img class="img-responsive" src="../resources/img/logo.png" alt="Pencil">
+    <div class="well"> Create a room, have friends join and laugh at each others drawings.</div>
+    <div id="errmsg"></div>
+    <div class="panel-group">
+        <div class="panel panel-primary">
+            <div class="panel-heading" data-toggle="collapse" data-target="#create">Create or join a lobby</div>
+            <div id="create" class="panel-body">
+                <form class="form-signin" action="/login" method="post">
+                    <label for="inputName" class="sr-only">Desired username</label>
+                    <input name="username" id="inputName" maxlength="14" class="form-control" placeholder="Username"
+                           required autofocus>
 
-              <label for="roomID" class="sr-only">Room</label>
-              <input name="room" id="roomID" class="form-control" placeholder="Room name" required>
+                    <label for="roomID" class="sr-only">Room</label>
+                    <input name="room" id="roomID" maxlength="14" class="form-control" placeholder="Room name" required>
 
-              <label for="roomPassword" class="sr-only">Room</label>
-              <input name="roomPassword" id="roomPassword" class="form-control" placeholder="Room password (optional)">
-              <button class="btn btn-lg btn-primary btn-block" type="submit">Join session</button>
-            </form>
-          </div>
+                    <label for="roomPassword" class="sr-only">Room</label>
+                    <input name="roomPassword" maxlength="14" id="roomPassword" class="form-control"
+                           placeholder="Room password (optional)">
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Join session</button>
+                </form>
+            </div>
         </div>
         <div class="panel panel-primary">
-          <div class="panel-heading">Live Sessions</div>
-          <div class="panel-body">
-            <table id="sessionlist" class="table table-striped">
-              <thead>
-               <tr>
-               <th>Room name</th>
-                <th>Clients</th>
-                <th>Password</th>
-                <th>Join</th>
-              </tr>
-              <tbody>
-              <tr>
-              </tr>
-              </tbody>
-            </thead>
+            <div class="panel-heading">Live Sessions</div>
+            <div class="panel-body">
+                <table id="sessionlist" class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Room name</th>
+                        <th>Clients</th>
+                        <th>Password</th>
+                        <th>Join</th>
+                    </tr>
+                    <tbody>
+                    <tr>
+                    </tr>
+                    </tbody>
+                    </thead>
 
-          </table>
-           <button class="btn btn-sm btn-primary bt-block" type="button" onclick="refreshLive()">Refresh</button>
-          </div>
-        <!--
-      <div class="panel panel-primary">
-        <div class="panel-heading" data-toggle="collapse" data-target="#join">Join a lobby</div>
-          <div id="join"class="panel-body" >
-            <form class="form-join">
-              <label for="inputName" class="sr-only">Desired username</label>
-              <input type="username" id="inputName" class="form-control" placeholder="Name" required autofocus>
-              <label for="inputPassword" class="sr-only">Room</label>
-              <input type="room" id="inputPassword" class="form-control" placeholder="Room name" required>
-              <button class="btn btn-lg btn-primary btn-block" type="submit">Join session</button>
-            </form>
-          </div>
-      </div> -->
-    </div>
-</div> <!-- /container -->
+                </table>
+                <button class="btn btn-sm btn-primary bt-block" type="button" onclick="refreshLive()">Refresh</button>
+            </div>
+            <!--
+          <div class="panel panel-primary">
+            <div class="panel-heading" data-toggle="collapse" data-target="#join">Join a lobby</div>
+              <div id="join"class="panel-body" >
+                <form class="form-join">
+                  <label for="inputName" class="sr-only">Desired username</label>
+                  <input type="username" id="inputName" class="form-control" placeholder="Name" required autofocus>
+                  <label for="inputPassword" class="sr-only">Room</label>
+                  <input type="room" id="inputPassword" class="form-control" placeholder="Room name" required>
+                  <button class="btn btn-lg btn-primary btn-block" type="submit">Join session</button>
+                </form>
+              </div>
+          </div> -->
+        </div>
+    </div> <!-- /container -->
+</div>
 
-
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="../bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src='/socket.io/socket.io.js'></script>
-    <script src="../resources/js/login.js"></script>
-  </body>
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="../bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="../bootstrap/dist/js/bootstrap.min.js"></script>
+<script src='/socket.io/socket.io.js'></script>
+<script src="../resources/js/login.js"></script>
+</body>
 </html>
