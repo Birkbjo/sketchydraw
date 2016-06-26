@@ -18,9 +18,9 @@ function Room(data) {
     this.nrUsersGuessed = 0;
     this.password = null;
     this.clientUid = 0;
-    if (data.roompass) {
-        console.log("password: " + data.roompass);
-        this.password = data.roompass;
+    if (data.roomPassword) {
+        console.log("password: " + data.roomPassword);
+        this.password = data.roomPassword;
     }
 
 }
