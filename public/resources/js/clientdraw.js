@@ -14,7 +14,7 @@ window.onload = function() { //firefox scoketio bug fix
 
 };
 $(function() {
-    //  $('#overlay').remove();
+    drawColorPalette();
     setUp();
 
 });
@@ -260,7 +260,7 @@ function connect(name,room,pass,url) {
                 'drawing': drawing,
                 'id': id,
                 'name':name,
-                'pickedcolor':'#'+pickedcolor,
+                'pickedcolor':pickedcolor,
                 'pickedsize':pickedsize
             });
             lastEmit = $.now();
@@ -269,7 +269,7 @@ function connect(name,room,pass,url) {
         // Draw a line for the current user's movement, as it is
         // not received in the socket.on('moving') event above
         if(drawing){
-            drawLine(prev.x, prev.y,e.changedTouches[0].pageX-$('#paper').offset().left, e.changedTouches[0].pageY-$('#paper').offset().top,'#'+pickedcolor,pickedsize);
+            drawLine(prev.x, prev.y,e.changedTouches[0].pageX-$('#paper').offset().left, e.changedTouches[0].pageY-$('#paper').offset().top,pickedcolor,pickedsize);
 
             prev.x = e.changedTouches[0].pageX-$('#paper').offset().left;
             prev.y = e.changedTouches[0].pageY-$('#paper').offset().top;
@@ -284,7 +284,7 @@ function connect(name,room,pass,url) {
                 'x': e.pageX-$('#paper').offset().left,
                 'y': e.pageY-$('#paper').offset().top,
                 'drawing': drawing,
-                'pickedcolor':'#'+pickedcolor,
+                'pickedcolor':pickedcolor,
                 'pickedsize':pickedsize
             });
             lastEmit = $.now();
@@ -295,7 +295,7 @@ function connect(name,room,pass,url) {
         if(drawing){
          //   alert(e.pageX + " y: " + e.pageY)
           //   drawLine(prev.x, prev.y, e.pageX, e.pageY,'#'+pickedcolor,pickedsize);
-        drawLine(prev.x, prev.y, e.pageX-$('#paper').offset().left, e.pageY-$('#paper').offset().top,'#'+pickedcolor,pickedsize);
+        drawLine(prev.x, prev.y, e.pageX-$('#paper').offset().left, e.pageY-$('#paper').offset().top,pickedcolor,pickedsize);
 
             prev.x = e.pageX-$('#paper').offset().left;
             prev.y = e.pageY-$('#paper').offset().top;

@@ -1,9 +1,10 @@
 <html>
 <head>
 	<link rel="stylesheet" type="text/css" href="../resources/css/draw.css">
+	<link rel='stylesheet' href='../resources/js/spectrum/spectrum.css' />
 	<!--<link href="../resources/css/bootstrapsuper.css" rel="stylesheet"> -->
 	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
-	<script type="text/javascript" src="../resources/js/mainutil.js"></script>
+
 </head>
 
 <body>
@@ -38,7 +39,7 @@
 			<button id="clearPaper">Clear</button>
 			<div class="controlGrp">
 				<label>Pick color</label> <br />
-				<input class="color" onchange="pickedcolor=this.color.toString();">
+				<input id="color_picker" type="text" />
 			</div>
 			<div class="controlGrp">
 				<label>Size</label><br />
@@ -62,9 +63,10 @@
 </div>
 
 <script src="http://code.jquery.com/jquery-1.12.4.min.js"   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>
+<script src='../resources/js/spectrum/spectrum.js'></script>
+<script type="text/javascript" src="../resources/js/mainutil.js"></script>
 <script src="../resources/js/clientdraw.js"></script>
 <script src='/socket.io/socket.io.js'></script>
-<script type="text/javascript" src="../resources/js/jscolor/jscolor.js"></script>
 </body>
 
 </html>
