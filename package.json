@@ -1,24 +1,31 @@
 {
   "name": "SketchyDraw",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.2",
+
+  "description": "A realtime drawing game.",
   "main": "server/serv.js",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.13.3",
-    "request": "^2.67.0",
+    "express-session": "^1.13.0",
     "node-static": "^0.7.7",
+    "request": "^2.67.0",
     "socket.io": "^1.3.7"
   },
   "devDependencies": {},
   "scripts": {
-    "start": "node ./server/serv.js",
+    "cwd" : "/server",
+    "start": "node serv.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "http://gitlab.com/Birkbjo/sketchydraw.git"
+    "url": "https://github.com/Birkbjo/sketchydraw"
+  },
+  "engines": {
+    "node": "<= 6.0.0"
   },
   "keywords": [],
-  "author": "",
+  "author": "Birk Johansson",
   "license": "ISC"
 }

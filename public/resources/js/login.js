@@ -1,17 +1,17 @@
 var socket;
 printerr(getUrlParameter('err'));
-$.getJSON('../resources/js/setup.json',function(data) {
-	establish(data.port);
-	refreshLive();
-});
-var myCookie = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1");
-if(myCookie.length>0){
-	location.href="/main/";
+window.onload = function() { //firefox scoketio bug fix
+	$.getJSON('../resources/js/setup.json',function(data) {
+		establish(data.port);
+		refreshLive();
+	});
 }
 
+var myCookie = document.cookie.replace(/(?:(?:^|.*;\s*)name\s*\=\s*([^;]*).*$)|^.*$/, "$1");
+
+
 function establish(port) {
-	var url = window.location.hostname+":"+port;
-	console.log("Connecting to "+url);
+	var url = window.location.hostname+":"+port+"/login";
 	socket = io.connect(url);
 	listenEvents(socket);	
 }
@@ -31,15 +31,13 @@ function createRoom(){
 	}
 
 function connectRoom(name,room,pass) {
-	if (name.length>0 && room.length > 0) {
-		document.cookie ="name=" + encodeURIComponent(name)+'; path=/';
-		document.cookie = "room="+encodeURIComponent(room)+'; path=/';
-		if(pass && pass.length > 0) {
-			document.cookie = "roompass="+encodeURIComponent(pass)+'; path=/';
-		}
-			
-		location.href="/main";
-	}
+	var form = $('<form action="/login" method="post">' +
+		'<input type="text" name="username" value="' + name + '" />' +
+		'<input type="text" name="room" value="' + room + '" />' +
+		'</form>');
+	$('body').append(form);
+	form.submit();
+
 }
 
 function connectFromList(ele) {

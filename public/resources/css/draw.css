@@ -32,7 +32,6 @@ input[type="button"]:hover,button:hover,#words li:hover {
 }
 input[type="button"]:active,button:active,#words li:active {
 	background-color:#455A64;
-	box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
 }
 input[type="button"]:disabled {
 	color:#CFD8DC;
@@ -110,12 +109,17 @@ input[type="button"]:disabled {
 }
 #connectedUsers {
 	font-size:16px;
-	width:100px;
+	width:190px;
 	margin:0 auto 15px auto;
 	text-align: left;
 }
 #connectedUsers span {
-	margin-left:10px;
+	margin-top:5px;
+	float:right;
+}
+#connectedUsers li {
+	overflow:hidden;
+	list-style:none;
 }
 
 #paper {
@@ -129,9 +133,10 @@ input[type="button"]:disabled {
 
 #cursors .cursor{
 	position:absolute;
-	width:15px;
-	height:22px;
-	background:url('http://demo.tutorialzine.com/2012/08/nodejs-drawing-game/assets/img/pointer.png') no-repeat -4px 0;
+	z-index:5;
+	width:35px;
+	height:35px;
+	background:url('http://www.rw-designer.com/cursor-extern.php?id=77946') no-repeat 0 0;
 }
 
 #overlay {
@@ -150,7 +155,7 @@ input[type="button"]:disabled {
 	padding:2px;
 	height:50px;
 	width:200px;
-	background-color: #78909C;
+	background-color: #4e5d6c;
     box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24);
 	font-size:1em;
 	top:10px;
@@ -194,6 +199,29 @@ input[type="button"]:disabled {
 }
 #words li:hover {
 	cursor:pointer;
+}
+
+
+.list-icon:before {
+	content:'';
+	display: inline-block;
+	height: 20px;
+	width: 20px;
+	background-image: url("../img/no.png");
+	background-repeat:no-repeat;
+	background-position-y: 3px;
+	background-size: contain;
+	margin-right:5px;
+}
+
+
+.icon-draw:before {
+	background-image: url("../img/pencil.png");
+
+
+}
+.icon-success:before {
+	background-image:url("../img/success.png");
 }
 
 .noselect {

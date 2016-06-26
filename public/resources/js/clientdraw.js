@@ -10,18 +10,22 @@ $("#btnJoin").on("click",function() {
       }
     
   }); */
+window.onload = function() { //firefox scoketio bug fix
+
+};
 $(function() {
-    $('#overlay').remove();
+    //  $('#overlay').remove();
     setUp();
-    
+
 });
 
 // Get The URL and portof your web server (the port is set in setup.json)
 function setUp() {
     $.getJSON('../resources/js/setup.json',function(data) {
-        connect(getCookie('name'),getCookie('room'),getCookie('roompass'),window.location.hostname+":"+data.port);
+        connect(getCookie('name'),getCookie('room'),getCookie('roompass'),window.location.hostname+":"+data.port+"/rooms");
     });
 }
+var user, drawer = -1;
 function connect(name,room,pass,url) {
     var timer = -1;
 //$(function(){
@@ -29,55 +33,54 @@ function connect(name,room,pass,url) {
         alert('Sorry, it looks like your browser does not support canvas!');
         return false;
     }
-    if(getCookie('name') == false) return;
-    
 
     var doc = $(document),
         win = $(window),
         canvas = $('#paper'),
         btnClear = $('#clearPaper'),
         ctx = canvas[0].getContext('2d');
-
-    // Generate an unique ID
-
-    var id = Math.round($.now()*Math.random());
+    
 
     // A flag for drawing activity
     var drawing = false;
     var allowed = false;
     var clients = {};
     var cursors = {};
-  //  var room = prompt("Type a room to enter","Default");
+
     var socket = io.connect(url);
+
     socket.on('connect',function() {
-        socket.emit("adduser", {
-            'id': id,
-            'name':name,
-            'room':room,
-            'roompass':pass
-        });
+
+    });
+    //Fired after user joined a room. Data is the user object
+    socket.on('connected',function(data) {
+
+        user = data;
+        console.dir(user);
     });
 
-    socket.on('updateusers',function(users) {
+    socket.on('updateusers',function(users) { //todo use append only, no need to empty.
+        console.log(users);
         $('#connectedUsers').empty();
         var first,count = 0;
         for(ident in users) {
              if(count == 0) {
                 first = users[ident].name;
             }  
-            $('#connectedUsers').append($('<li id='+users[ident].id+'>').html(users[ident].name +"<span>"+users[ident].score+"</span>"));
+            var litem = $('<li class="list-icon" id='+users[ident].id+'>'+users[ident].name+'<span>0</span>').appendTo('#connectedUsers');
+            console.log(litem);
+            if(users[ident].id == drawer.id) {
+               litem.toggleClass('icon-draw');
+            } else if(users[ident.correct]) {
+               litem.toggleClass('icon-success');
+            }
             count++;
         }
-     //   for(var i = 0;i<users.length;i++) {
-        if(name == first && timer < 0) {
+        if(user.name == first && timer < 0) {
             $('#btnStart').attr("disabled",false);
         } else {
             $('#btnStart').attr("disabled",true);
         }
-       /* $.each(users,function(key,value) {
-            first = 
-            $('#connectedUsers').append($('<li>').text(value));
-        }); */
     });
 
 
@@ -113,7 +116,7 @@ function connect(name,room,pass,url) {
         var msg = $('#inputChat').val().trim();
         if(msg === '') return false;
         socket.emit('chatmessage',{
-            'uname':name,
+            'uname':user.name,
             'msg':msg
         });
         $('#inputChat').val('');
@@ -123,19 +126,13 @@ function connect(name,room,pass,url) {
     $('#btnStart').on("click",function() {
         $('#btnStop').attr("disabled",false);
         $('#btnStart').attr("disabled",true);
-        socket.emit('startgame', {
-            'uname':name,
-            'id':id,
-        });
+        socket.emit('startgame');
     });
 
     $('#btnStop').on('click',function() {
         $('#btnStop').attr("disabled",true);
         $('#btnStart').attr("disabled",false);
-        socket.emit('stopgame',{
-            'uname':name,
-            'id':id,
-        });
+        socket.emit('stopgame');
     });
 
     socket.on('startgame',function(turn) {
@@ -144,7 +141,8 @@ function connect(name,room,pass,url) {
             allowed = true;
             clearCanvas();
         }*/
-        
+        $('#connectedUsers li').removeClass("icon-draw icon-success");
+        setDrawer(turn.drawer);
         clearCanvas();
         timer = turn.time/1000;
         $('#timeRound').text(timer);
@@ -171,8 +169,11 @@ function connect(name,room,pass,url) {
         
     });
     socket.on('updatescore',function(data) {
-        var userindex = data.index+1;
         $('#connectedUsers #'+data.id+' span').text(data.score);
+        if(data.id != drawer.id) {
+            $('#connectedUsers #'+data.id).addClass('icon-success');
+        }
+
     });
     
     socket.on('chat',function(msg) {
@@ -201,7 +202,7 @@ function connect(name,room,pass,url) {
         $('#hintwords').empty();
         for(var i = 0;i<data.leng;i++) {
             if(data.spaceInd.indexOf(i) >= 0) {
-                $('#hintwords').append(" ");
+                $('#hintwords').append("  ");
                 data.spaceInd.splice(i,1);
             } else {
                 $('#hintwords').append("_");
@@ -235,7 +236,7 @@ function connect(name,room,pass,url) {
         prev.y = e.changedTouches[0].pageY-$('#paper').offset().top;
     });
     
-    canvas.bind('mouseup mouseleave',function(){
+    canvas.bind('mouseup',function(){
         drawing = false;
     });
     canvas.bind('touchend',function() {
@@ -283,8 +284,6 @@ function connect(name,room,pass,url) {
                 'x': e.pageX-$('#paper').offset().left,
                 'y': e.pageY-$('#paper').offset().top,
                 'drawing': drawing,
-                'id': id,
-                'name':name,
                 'pickedcolor':'#'+pickedcolor,
                 'pickedsize':pickedsize
             });
@@ -303,28 +302,14 @@ function connect(name,room,pass,url) {
         }
     });
 
-    // Remove inactive clients after 10 seconds of inactivity
-    setInterval(function(){
-
-        for(ident in clients){
-            if($.now() - clients[ident].updated > 10000){
-
-                // Last update was more than 10 seconds ago.
-                // This user has probably closed the page
-            //    socket.emit('disconnect');
-                cursors[ident].remove();
-                delete clients[ident];
-                delete cursors[ident];
-            }
-        }
-
-    },10000);
 
     function endRound() {
-         allowed = false;
+        allowed = false;
+        $('#paper').css('cursor',"auto");
         timer = -1;
         $('#timeRound').text(0);
         $('hintwords').empty();
+
         var $overlay = $('#turnoverlay');
         $overlay.hide(400);
             $('#paper').fadeTo("slow",1);
@@ -360,6 +345,7 @@ function connect(name,room,pass,url) {
 
     function selectWord(data) {
         $('#paper').fadeTo("slow",0.2);
+        $('#paper').css('cursor',"url('http://www.rw-designer.com/cursor-extern.php?id=77946'),auto");
         var words = data.words;
         var $overlay = $('#turnoverlay');
         //$overlay.css('display','block');
@@ -381,6 +367,17 @@ function connect(name,room,pass,url) {
     }
  
 }
+
+function setDrawer(user) {
+    drawer = user;
+    $('#connectedUsers #'+user.id).addClass('icon-draw');
+
+}
+
+function userGuessed(user) { //todo implement user-guessed event
+
+}
+
 String.prototype.replaceAt=function(index, char) {
     return this.substr(0, index) + char + this.substr(index+char.length);
 }  
