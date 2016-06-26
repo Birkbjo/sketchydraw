@@ -1,6 +1,7 @@
 {
   "name": "SketchyDraw",
   "version": "0.0.2",
+
   "description": "A realtime drawing game.",
   "main": "server/serv.js",
   "dependencies": {
@@ -20,6 +21,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/Birkbjo/sketchydraw"
+  },
+  "engines": {
+    "node": "<= 6.0.0"
   },
   "keywords": [],
   "author": "Birk Johansson",

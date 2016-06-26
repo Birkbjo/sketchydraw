@@ -52,11 +52,13 @@ function connect(name,room,pass,url) {
     socket.on('connect',function() {
 
     });
+    //Fired after user joined a room. Data is the user object
     socket.on('connected',function(data) {
 
         user = data;
         console.dir(user);
     });
+
     socket.on('updateusers',function(users) { //todo use append only, no need to empty.
         console.log(users);
         $('#connectedUsers').empty();
