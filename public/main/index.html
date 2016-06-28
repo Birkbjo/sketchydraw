@@ -43,7 +43,7 @@
 			</div>
 			<div class="controlGrp">
 				<label>Size</label><br />
-				<input type="range" min="1" id="rangesize" defaultValue="4"max="100" oninput="changeSize(this.value)" onchange="changeSize(this.value);">
+				<input type="range" min="1" id="rangesize" value="4"max="100" oninput="changeSize(this.value)" onchange="changeSize(this.value);">
 				<input type="number" id="nrSize" min="1" value="4" max="100" oninput="changeSize(this.value)" onchange="changeSize(this.value);" >
 				
 			</div>
@@ -62,10 +62,11 @@
 
 </div>
 
-<script src="http://code.jquery.com/jquery-1.12.4.min.js"   integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="   crossorigin="anonymous"></script>
+<script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src='../resources/js/spectrum/spectrum.js'></script>
 <script type="text/javascript" src="../resources/js/mainutil.js"></script>
-<script src="../resources/js/clientdraw.js"></script>
+<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.2/fabric.min.js"></script>
+<script src="../resources/js/game.js"></script>
 <script src='/socket.io/socket.io.js'></script>
 </body>
 

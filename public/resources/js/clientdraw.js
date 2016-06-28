@@ -11,22 +11,24 @@ $("#btnJoin").on("click",function() {
     
   }); */
 window.onload = function() { //firefox scoketio bug fix
-
+   // drawColorPalette();
 };
 $(function() {
-    drawColorPalette();
+
     setUp();
 
 });
 
 // Get The URL and portof your web server (the port is set in setup.json)
 function setUp() {
-    $.getJSON('../resources/js/setup.json',function(data) {
-        connect(getCookie('name'),getCookie('room'),getCookie('roompass'),window.location.hostname+":"+data.port+"/rooms");
-    });
+  //  $.getJSON('../resources/js/setup.json',function(data) {
+    var port = 8000;
+        connect(window.location.hostname+":"+port+"/rooms");
+ //   });
+   // connect(url);
 }
 var user, drawer = -1;
-function connect(name,room,pass,url) {
+function connect(url) {
     var timer = -1;
 //$(function(){
     if(!('getContext' in document.createElement('canvas'))){
@@ -248,6 +250,7 @@ function connect(name,room,pass,url) {
     });
 
     var lastEmit = $.now();
+    //TODO fabricjs use own pencilbrush instance for drawing remote actions.
     canvas.on('touchmove',function(e) {
         e.preventDefault();
         e = e.originalEvent;
@@ -258,8 +261,7 @@ function connect(name,room,pass,url) {
                 'x': e.changedTouches[0].pageX-$('#paper').offset().left,
                 'y': e.changedTouches[0].pageY-$('#paper').offset().top,
                 'drawing': drawing,
-                'id': id,
-                'name':name,
+                'name':user.name,
                 'pickedcolor':pickedcolor,
                 'pickedsize':pickedsize
             });

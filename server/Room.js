@@ -32,7 +32,9 @@ function User(socket, data,room) {
     this.usock = socket.id;
     this.correct = false;
     this.room = data.wantedRoom;
-
+    this.allowedDrawing = false;
+    this.isDrawing = false;
+    this.isLeader = false;
 }
 
 User.prototype.secureUserObject = function () {
@@ -41,7 +43,10 @@ User.prototype.secureUserObject = function () {
         'name': this.name,
         'room': this.room,
         'correct': this.correct,
-        'score': this.score
+        'score': this.score,
+        'isDrawing': this.isDrawing,
+        'allowedDrawing': this.allowedDrawing,
+        'isLeader': this.isLeader
     }
 }
 
@@ -81,11 +86,16 @@ Room.prototype.addUser = function (socket, data) {
         socket.roomid = data.wantedRoom;
         this.turnQueue.push(socket.id);
         user = new User(socket, data,this);
+
         console.log(user.id);
         this.users[user.usock] = user;
+        user.isLeader = this.getLeader().id == user.id ? true : false;
         //Store room in session
         socket.request.session.joinedRoom = data.wantedRoom;
-        user.send('connected',user.secureUserObject());
+        user.send('connected',{
+            user:  user.secureUserObject(),
+            drawer: this.currDrawer || -1
+        });
         io.to(socket.roomid).emit('updateusers', this.secureUsers());
 
     } else { //name in use
@@ -150,6 +160,7 @@ Room.prototype.endGame = function (socket) {
 }
 
 Room.prototype.prepareRound = function(socket) {
+    this.turn = this.turn == this.turnQueue.length -1 ? 0 : this.turn+1;
     var user = this.getThisTurnUser();
     if (user) {
         var msg = {'uname': "Next round", 'msg': user.name + " is drawing!"};
@@ -179,8 +190,6 @@ Room.prototype.startRound = function (socket) {
 Room.prototype.endRound = function(socket) {
     //console.log(this.hintInterval);
     clearInterval(this.hintInterval);
-    this.turn = this.turn == this.turnQueue.length -1 ? 0 : this.turn+1;
-
     var msg = {'uname': "Round ended", 'msg': "The word was: " + this.currWord};
     io.to(socket.roomid).emit("chat", msg);
     this.currWord = null;
@@ -251,6 +260,9 @@ Room.prototype.disconnectUser = function (socket) {
     var i = this.turnQueue.indexOf(socket.id);
     if (i >= 0) {
         var user = this.getUser(socket.id);
+        if(i == 0 && this.turnQueue.length > 1) {
+            this.getUser(this.turnQueue[1]).isLeader = true;
+        }
         delete this.users[socket.id];
         this.turnQueue.splice(i, 1);
         io.to(socket.roomid).emit('updateusers', this.secureUsers());

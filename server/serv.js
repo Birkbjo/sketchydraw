@@ -6,7 +6,7 @@ var sio = setup.io;
 var io = sio.of('/rooms');
 exports.io = io;
 
-var Room = require('./Room.js');
+var Room = require('./room.js');
 var wordList = require('./words.js');
 
 
@@ -67,6 +67,12 @@ io.on('connection', function (socket) {
     socket.on('mousemove', function (data) {
         if (rooms[socket.roomid].isDrawer(socket)) {
             socket.broadcast.to(socket.roomid).emit('moving', data);
+        }
+    });
+
+    socket.on('canvas:sync', function(data) {
+        if (rooms[socket.roomid].isDrawer(socket)) {
+            socket.broadcast.to(socket.roomid).emit('canvas:sync',data);
         }
     });
 

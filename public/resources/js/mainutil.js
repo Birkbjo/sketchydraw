@@ -2,22 +2,6 @@
 var pickedcolor = 'black';
 var pickedsize = 3;
 
-window.onload = function () {
-
-}
-
-
-function promptUsername() {
-    var name = prompt("Desired username");
-    if (name != null) {
-        document.cookie = "name=" + encodeURIComponent(name) + '; path=/';
-    }
-}
-function changename() {
-    var name = document.getElementById('username');
-    name.innerHTML = 'You are logged in as:' + getCookie('name');
-}
-
 function getCookie(name) {
     var value = "; " + document.cookie;
     var parts = value.split("; " + name + "=");
@@ -61,10 +45,6 @@ function drawColorPalette() {
         togglePaletteLessText: 'less',
         hideAfterPaletteSelect: true,
         preferredFormat: "hex",
-        change: function (color) {
-            pickedcolor = $(this).val();
-            //console.log(pickedcolor);
-        },
         palette: [
             ["#000", "#444", "#666", "#999", "#ccc", "#eee", "#f3f3f3", "#fff"],
             ["#f00", "#f90", "#ff0", "#0f0", "#0ff", "#00f", "#90f", "#f0f"],
@@ -76,7 +56,8 @@ function drawColorPalette() {
             ["#600", "#783f04", "#7f6000", "#274e13", "#0c343d", "#073763", "#20124d", "#4c1130"]
         ]
     });
+}
 
-
-    pickedcolor = $("#color_picker").val().replace("#", '');
+String.prototype.replaceAt=function(index, char) {
+    return this.substr(0, index) + char + this.substr(index+char.length);
 }
