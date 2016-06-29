@@ -60,11 +60,14 @@ function routes(app) {
         var rooms = serv.rooms;
         console.log(roomid);
         console.log(rooms);
+        if (req.session.user) {
+            res.redirect("/");
+        }
         if (roomid in rooms) {
             console.log("success");
             res.sendFile(path.join(__dirname,"../public/login/joinroom.html"));
          //   res.cookie('room', roomid, {maxAge: SESSION_TIME});
-            res.redirect("/");
+         //   res.redirect("/");
         } else {
             console.log("fail");
             res.redirect("/login?err=6");
