@@ -11,18 +11,15 @@ function routes(app) {
     });
 
     app.get("/", function (req, res) {
-        res.redirect("/login");
-    });
-    app.get("/main", function (req,res) {
         if(!req.session.user) {
-            res.redirect("/");
+            res.redirect("/login");
         }
         res.sendFile(path.join(__dirname,"../public/main/index.html"));
     });
 
     app.get("/login", function(req,res) {
         if(req.session.username) {
-            res.redirect("/main");
+            res.redirect("/");
         }
         res.sendFile(path.join(__dirname,"../public/login/index.html"));
     });
@@ -53,14 +50,12 @@ function routes(app) {
                 'wantedRoom': req.body.room,
                 'joinedRoom': null
             };
-           // res.cookie('name', req.body.username, {maxAge: SESSION_TIME, path: '/'});
-        //   res.cookie('room', req.body.room, {maxAge: SESSION_TIME, path: '/'});
-            res.redirect('/main');
+            res.redirect('/');
         });
 
     });
 
-    app.get("/room/:id", function (req, res) {
+    app.get("/:id", function (req, res) {
         var roomid = req.params.id;
         var rooms = serv.rooms;
         console.log(roomid);
@@ -68,8 +63,8 @@ function routes(app) {
         if (roomid in rooms) {
             console.log("success");
             //res.sendFile(path.join(__dirname,"../public/main/index.html"));
-            res.cookie('room', roomid, {maxAge: SESSION_TIME});
-            res.redirect("/main");
+         //   res.cookie('room', roomid, {maxAge: SESSION_TIME});
+            res.redirect("/");
         } else {
             console.log("fail");
             res.redirect("/login?err=6");

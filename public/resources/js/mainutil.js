@@ -58,6 +58,25 @@ function drawColorPalette() {
     });
 }
 
+
+function getAfterSlash() {
+   return window.location.pathname.replace(/^\/([^\/]*).*$/, '$1');
+}
+
+function getUrlParameter(sParam)
+{
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++)
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam)
+        {
+            return sParameterName[1];
+        }
+    }
+}
+
 String.prototype.replaceAt=function(index, char) {
     return this.substr(0, index) + char + this.substr(index+char.length);
 }
