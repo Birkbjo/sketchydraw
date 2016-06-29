@@ -58,6 +58,7 @@ function Game(url) {
     this.enableDrawing = function () {
         self.disableDrawing(); //be sure that we remove listeners before we add them again.
         self.canvas.isDrawingMode = true;
+        self._clearCanvas();
         self.canvas.freeDrawingBrush.color = $("#color_picker").val() || '#000';
         self.canvas.freeDrawingBrush.width = $('#rangesize').val() || 5;
         self.canvas._initEventListeners();
@@ -86,7 +87,7 @@ function Game(url) {
             if (users[key].isLeader) {
                 leader = users[key];
             }
-            var litem = $('<li class="list-icon" id=' + users[key].id + '>' + users[key].name + '<span>0</span>').appendTo('#connectedUsers');
+            var litem = $('<li class="list-icon" id=' + users[key].id + '>' + users[key].name + '<span>'+users[key].score+'</span>').appendTo('#connectedUsers');
             console.log(litem);
             if (users[key].id == self.drawer.id) {
                 litem.toggleClass('icon-draw');
@@ -178,6 +179,7 @@ function Game(url) {
     };
 
     this._clearCanvas = function (data) {
+
         self.canvas.clear();
     }
 
@@ -217,7 +219,7 @@ function Game(url) {
     //    console.log("MOUSE UP");
         self.drawer.isDrawing = false;
         //self.remotePen.onMouseUp();
-        self.canvas.loadFromJSON(data.canvas, self.canvas.renderAll.bind(self.canvas));
+       // self.canvas.loadFromJSON(data.canvas, self.canvas.renderAll.bind(self.canvas));
     };
 
     this._remoteMove = function (data) {
@@ -262,9 +264,9 @@ function Game(url) {
 
     this._onLocalObjectAdded = function (e) {
         self.user.isDrawing = false;
-        self.socket.emit('canvas:sync', {
-            'canvas': self.canvas.toObject()
-        });
+     //   self.socket.emit('canvas:sync', {
+     //       'canvas': self.canvas.toObject()
+    //    });
     };
 
 

@@ -43,7 +43,9 @@ function routes(app) {
     });
 
     app.post("/login", function (req, res) {
-
+        if(req.body.username.length < 1 || req.body.room.length < 1) {
+            res.redirect("/login?err=7");
+        }
         req.session.regenerate(function () {
             req.session.user = {
                 'name': req.body.username.substring(0,14),
