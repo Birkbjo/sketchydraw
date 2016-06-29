@@ -10,17 +10,13 @@ function routes(app) {
         res.sendFile(path.join(__dirname,"../public/login/admin.html"));
     });
 
-    app.get("/", function (req, res) {
-        if(!req.session.user) {
-            res.redirect("/login");
-        }
-        res.sendFile(path.join(__dirname,"../public/main/index.html"));
-    });
+
 
     app.get("/login", function(req,res) {
-        if(req.session.username) {
+        if(req.session.user) {
             res.redirect("/");
         }
+        //res.redirect('/');
         res.sendFile(path.join(__dirname,"../public/login/index.html"));
     });
 
@@ -56,12 +52,12 @@ function routes(app) {
     });
 
     app.get("/:id", function (req, res) {
-        var roomid = req.params.id;
         var rooms = serv.rooms;
-        console.log(roomid);
-        console.log(rooms);
+        var roomid = req.params.id;
+        console.log(req.session.user);
         if (req.session.user) {
-            res.redirect("/");
+            res.sendFile(path.join(__dirname,"../public/main/index.html"));
+            return;
         }
         if (roomid in rooms) {
             console.log("success");
@@ -72,6 +68,15 @@ function routes(app) {
             console.log("fail");
             res.redirect("/login?err=6");
         }
+    });
+
+    app.get("/", function (req, res) {
+        if(!req.session.user) {
+            res.redirect("/login");
+            return;
+        }
+        res.redirect('/'+req.session.user.wantedRoom);
+        // res.sendFile(path.join(__dirname,"../public/main/index.html"));
     });
 
 }
