@@ -32,8 +32,8 @@ function createRoom(){
 
 function connectRoom(name,room,pass) {
 	var form = $('<form action="/login" method="post">' +
-		'<input type="text" name="username" value="' + name + '" />' +
-		'<input type="text" name="room" value="' + room + '" />' +
+		'<input type="hidden" name="username" value="' + name + '" />' +
+		'<input type="hidden" name="room" value="' + room + '" />' +
 		'</form>');
 	$('body').append(form);
 	form.submit();
