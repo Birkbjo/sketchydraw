@@ -3,6 +3,7 @@
  */
 
 window.onload = function() { //firefox scoketio bug fix
+    printerr(getUrlParameter('err'));
     initHtml();
 };
 

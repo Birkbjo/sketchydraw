@@ -1,7 +1,4 @@
 //check();
-var pickedcolor = 'black';
-var pickedsize = 3;
-
 function getCookie(name) {
     var value = "; " + document.cookie;
     var parts = value.split("; " + name + "=");
@@ -79,4 +76,40 @@ function getUrlParameter(sParam)
 
 String.prototype.replaceAt=function(index, char) {
     return this.substr(0, index) + char + this.substr(index+char.length);
+}
+
+function printerr(err) {
+    if(err) {
+        var msg;
+        switch(parseInt(err)) {
+            case 0:
+                msg = "You were timed out.";
+                break;
+            case 1:
+                msg = "You were kicked";
+                break;
+            case 2:
+                msg = "The password you entered did not match with the room's password."
+                break;
+            case 3:
+                msg = "The room you tried to join is full."
+                break;
+            case 4:
+                msg = "That name is already in use in this room. Try another.";
+                break;
+            case 5:
+                msg = "Room name not allowed";
+                break;
+            case 6:
+                msg = "A room with that name does not exist.";
+                break;
+            case 7:
+                msg = "Invalid username.";
+                break;
+            default:
+                msg = "An error occured.";
+                break;
+        }
+        $('#errmsg').html('<div class="alert alert-danger">'+msg+'</div>');
+    }
 }

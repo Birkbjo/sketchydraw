@@ -87,7 +87,7 @@ Room.prototype.addUser = function (socket, data) {
         this.turnQueue.push(socket.id);
         user = new User(socket, data,this);
 
-        console.log(user.id);
+        console.log("Created user with id " + user.id);
         this.users[user.usock] = user;
         user.isLeader = this.getLeader().id == user.id ? true : false;
         //Store room in session

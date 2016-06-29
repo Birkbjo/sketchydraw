@@ -37,8 +37,15 @@ function routes(app) {
 
     app.post("/login", function (req, res) {
         if(req.body.username.length < 1 || req.body.room.length < 1) {
-            res.redirect("/login?err=7");
+            res.redirect("/login/?err=7");
+            return;
         }
+        var room = serv.rooms[req.body.room];
+        if(room && room.password && room.password != req.body.roomPassword) {
+            res.redirect("/login/?err=2");
+            return;
+        }
+
         req.session.regenerate(function () {
             req.session.user = {
                 'name': req.body.username.substring(0,14),
@@ -54,18 +61,13 @@ function routes(app) {
     app.get("/:id", function (req, res) {
         var rooms = serv.rooms;
         var roomid = req.params.id;
-        console.log(req.session.user);
         if (req.session.user) {
             res.sendFile(path.join(__dirname,"../public/main/index.html"));
             return;
         }
         if (roomid in rooms) {
-            console.log("success");
             res.sendFile(path.join(__dirname,"../public/login/joinroom.html"));
-         //   res.cookie('room', roomid, {maxAge: SESSION_TIME});
-         //   res.redirect("/");
-        } else {
-            console.log("fail");
+        } else { //Room does not exist
             res.redirect("/login?err=6");
         }
     });
