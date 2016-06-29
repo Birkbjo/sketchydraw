@@ -62,7 +62,7 @@ function routes(app) {
         console.log(rooms);
         if (roomid in rooms) {
             console.log("success");
-            //res.sendFile(path.join(__dirname,"../public/main/index.html"));
+            res.sendFile(path.join(__dirname,"../public/login/joinroom.html"));
          //   res.cookie('room', roomid, {maxAge: SESSION_TIME});
             res.redirect("/");
         } else {
