@@ -55,7 +55,7 @@ function connectUser(socket) {
     } else {
         console.log("Failed to connect");
     }
-}
+} 
 
 // Listen for incoming connections from clients
 io.on('connection', function (socket) {

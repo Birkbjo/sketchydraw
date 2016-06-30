@@ -218,7 +218,7 @@ function Game(url) {
     this._remoteSync = function (data) {
     //    console.log("MOUSE UP");
         self.drawer.isDrawing = false;
-        //self.remotePen.onMouseUp();
+        self.remotePen.onMouseUp();
        // self.canvas.loadFromJSON(data.canvas, self.canvas.renderAll.bind(self.canvas));
     };
 
