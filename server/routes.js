@@ -40,6 +40,7 @@ function routes(app) {
             res.redirect("/login/?err=7");
             return;
         }
+
         var room = serv.rooms[req.body.room];
         if(room && room.password && room.password != req.body.roomPassword) {
             res.redirect("/login/?err=2");
@@ -51,6 +52,7 @@ function routes(app) {
                 'name': req.body.username.substring(0,14),
                 'roomPassword': req.body.roomPassword,
                 'wantedRoom': req.body.room,
+                'roomURI': encodeURIComponent(req.body.room),
                 'joinedRoom': null
             };
             res.redirect('/');
@@ -62,6 +64,12 @@ function routes(app) {
         var rooms = serv.rooms;
         var roomid = req.params.id;
         if (req.session.user) {
+            //User logged in, but navigating to another room, maybe destroy cookie instead of redirecting back?
+            if (req.session.user.wantedRoom !== req.params.id) {
+                var reUrl = "/"+req.session.user.roomURI;
+                res.redirect(reUrl);
+                return;
+            }
             res.sendFile(path.join(__dirname,"../public/main/index.html"));
             return;
         }
@@ -77,7 +85,7 @@ function routes(app) {
             res.redirect("/login");
             return;
         }
-        res.redirect('/'+req.session.user.wantedRoom);
+        res.redirect('/'+req.session.user.roomURI);
         // res.sendFile(path.join(__dirname,"../public/main/index.html"));
     });
 
