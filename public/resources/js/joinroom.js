@@ -8,7 +8,7 @@ window.onload = function() { //firefox scoketio bug fix
 };
 
 function initHtml() {
-    var room = getAfterSlash();
+    var room = decodeURIComponent(getAfterSlash());
     $('#heading').text("Joining \"" + room +"\"");
     $('#roomID').val(room);
 }
