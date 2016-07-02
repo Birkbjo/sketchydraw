@@ -25,7 +25,7 @@ function Room(data) {
 
 }
 
-function User(socket, data,room) {
+function User(socket, data, room) {
     this.name = data.name;
     this.score = 0;
     this.id = room.clientUid++; //Id for the client to identify scores etc - not sensitive
@@ -39,7 +39,7 @@ function User(socket, data,room) {
 
 User.prototype.secureUserObject = function () {
     return {
-        'id' : this.id,
+        'id': this.id,
         'name': this.name,
         'room': this.room,
         'correct': this.correct,
@@ -50,11 +50,11 @@ User.prototype.secureUserObject = function () {
     }
 }
 
-User.prototype.send = function(event,data) {
-    if(typeof event != 'string') {
+User.prototype.send = function (event, data) {
+    if (typeof event != 'string') {
         return false;
     }
-    io.to(this.usock).emit(event,data);
+    io.to(this.usock).emit(event, data);
 }
 
 //Used to strip out sensitive user info before sending.
@@ -85,15 +85,15 @@ Room.prototype.addUser = function (socket, data) {
         socket.join(data.wantedRoom);
         socket.roomid = data.wantedRoom;
         this.turnQueue.push(socket.id);
-        user = new User(socket, data,this);
+        user = new User(socket, data, this);
 
         console.log("Created user with id " + user.id);
         this.users[user.usock] = user;
         user.isLeader = this.getLeader().id == user.id ? true : false;
         //Store room in session
         socket.request.session.joinedRoom = data.wantedRoom;
-        user.send('connected',{
-            user:  user.secureUserObject(),
+        user.send('connected', {
+            user: user.secureUserObject(),
             drawer: this.currDrawer || -1
         });
         io.to(socket.roomid).emit('updateusers', this.secureUsers());
@@ -110,7 +110,7 @@ Room.prototype.getUser = function (id) {
     return this.users[id] || null;
 }
 
-Room.prototype.getThisTurnUser = function() {
+Room.prototype.getThisTurnUser = function () {
     return this.users[this.turnQueue[this.turn]];
 }
 
@@ -136,7 +136,7 @@ Room.prototype.getDrawer = function () {
 }
 
 Room.prototype.isDrawer = function (socket) {
-    if(this.currDrawer) {
+    if (this.currDrawer) {
         return socket.id === this.currDrawer.usock;
     }
     return false;
@@ -159,8 +159,8 @@ Room.prototype.endGame = function (socket) {
 
 }
 
-Room.prototype.prepareRound = function(socket) {
-    this.turn = this.turn == this.turnQueue.length -1 ? 0 : this.turn+1;
+Room.prototype.prepareRound = function (socket) {
+    this.turn = this.turn == this.turnQueue.length - 1 ? 0 : this.turn + 1;
     var user = this.getThisTurnUser();
     if (user) {
         var msg = {'uname': "Next round", 'msg': user.name + " is drawing!"};
@@ -187,7 +187,7 @@ Room.prototype.startRound = function (socket) {
     }
 }
 
-Room.prototype.endRound = function(socket) {
+Room.prototype.endRound = function (socket) {
     //console.log(this.hintInterval);
     clearInterval(this.hintInterval);
     var msg = {'uname': "Round ended", 'msg': "The word was: " + this.currWord};
@@ -222,7 +222,7 @@ Room.prototype.giveHints = function (word, socket) {
     var len = chars.length;
     var times = Math.floor(chars.length / 2);
     var spIndex = findSpaces(word);
-    chars = chars.map(function(val,ind) {
+    chars = chars.map(function (val, ind) {
         var obj = {};
         obj.val = val
         obj.orgIndex = ind;
@@ -230,7 +230,7 @@ Room.prototype.giveHints = function (word, socket) {
     });
 
     for (var i = 0; i < spIndex.length; i++) {
-        chars.splice(spIndex[i],1);
+        chars.splice(spIndex[i], 1);
     }
     var data = {'leng': len, 'spaceInd': spIndex};
     socket.broadcast.to(socket.roomid).emit('hintlength', data);
@@ -243,15 +243,15 @@ Room.prototype.giveHints = function (word, socket) {
             clearInterval(this.hintInterval);
             return;
         }
-        var hint = (function() {
+        var hint = (function () {
             var ind = Math.floor(Math.random() * chars.length);
             var char = chars[ind].val;
             var orgInd = chars[ind].orgIndex;
-            chars.splice(ind,1);
+            chars.splice(ind, 1);
             return {'char': char, 'index': orgInd};
         })();
         console.log("Hint is " + hint.char + " index " + hint.index);
-        socket.broadcast.to(socket.roomid).emit('hint',hint);
+        socket.broadcast.to(socket.roomid).emit('hint', hint);
         count++;
     }, interval);
 }
@@ -260,7 +260,7 @@ Room.prototype.disconnectUser = function (socket) {
     var i = this.turnQueue.indexOf(socket.id);
     if (i >= 0) {
         var user = this.getUser(socket.id);
-        if(i == 0 && this.turnQueue.length > 1) {
+        if (i == 0 && this.turnQueue.length > 1) {
             this.getUser(this.turnQueue[1]).isLeader = true;
         }
         delete this.users[socket.id];
@@ -286,7 +286,7 @@ Room.prototype.updateScores = function () {
 
 }
 
-Room.prototype.guessedCorrectly = function(socket, msg) {
+Room.prototype.guessedCorrectly = function (socket, msg) {
     var user = this.getUser(socket.id);
     if (!user.correct) {
         this.nrUsersGuessed++;
@@ -306,13 +306,13 @@ Room.prototype.guessedCorrectly = function(socket, msg) {
         io.to(socket.roomid).emit('updatescore', user.secureUserObject());
         io.to(socket.roomid).emit('updatescore', this.currDrawer.secureUserObject());
     }
-    if (this.nrUsersGuessed == this.nrOfUsers()-1) {
+    if (this.nrUsersGuessed == this.nrOfUsers() - 1) {
         console.log("All guessed, new round");
         this.allGuessedCorrectly(socket);
     }
 }
 
-Room.prototype.allGuessedCorrectly = function(socket) {
+Room.prototype.allGuessedCorrectly = function (socket) {
     clearTimeout(this.roundTimeout);
     this.endRound(socket);
 }

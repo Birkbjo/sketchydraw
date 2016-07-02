@@ -12,13 +12,13 @@ function logout(err) {
     //router gets a chance to redirect to login, prevent this by checking for this error
     if (!err) {
         location.href = "/logout/";
-    } else if (err != "transport close"){
+    } else if (err != "transport close") {
         location.href = "/logout?err=" + err;
     }
 
 }
 function delete_cookie(name) {
-   // document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
+    // document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/';
     console.log(document.cookie);
     return;
 }
@@ -57,31 +57,28 @@ function drawColorPalette() {
 
 
 function getAfterSlash() {
-   return window.location.pathname.replace(/^\/([^\/]*).*$/, '$1');
+    return window.location.pathname.replace(/^\/([^\/]*).*$/, '$1');
 }
 
-function getUrlParameter(sParam)
-{
+function getUrlParameter(sParam) {
     var sPageURL = window.location.search.substring(1);
     var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++)
-    {
+    for (var i = 0; i < sURLVariables.length; i++) {
         var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam)
-        {
+        if (sParameterName[0] == sParam) {
             return sParameterName[1];
         }
     }
 }
 
-String.prototype.replaceAt=function(index, char) {
-    return this.substr(0, index) + char + this.substr(index+char.length);
+String.prototype.replaceAt = function (index, char) {
+    return this.substr(0, index) + char + this.substr(index + char.length);
 }
 
 function printerr(err) {
-    if(err) {
+    if (err) {
         var msg;
-        switch(parseInt(err)) {
+        switch (parseInt(err)) {
             case 0:
                 msg = "You were timed out.";
                 break;
@@ -110,6 +107,6 @@ function printerr(err) {
                 msg = "An error occured.";
                 break;
         }
-        $('#errmsg').html('<div class="alert alert-danger">'+msg+'</div>');
+        $('#errmsg').html('<div class="alert alert-danger">' + msg + '</div>');
     }
 }

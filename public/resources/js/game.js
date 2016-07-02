@@ -87,7 +87,7 @@ function Game(url) {
             if (users[key].isLeader) {
                 leader = users[key];
             }
-            var litem = $('<li class="list-icon" id=' + users[key].id + '>' + users[key].name + '<span>'+users[key].score+'</span>').appendTo('#connectedUsers');
+            var litem = $('<li class="list-icon" id=' + users[key].id + '>' + users[key].name + '<span>' + users[key].score + '</span>').appendTo('#connectedUsers');
             console.log(litem);
             if (users[key].id == self.drawer.id) {
                 litem.toggleClass('icon-draw');
@@ -95,10 +95,10 @@ function Game(url) {
                 litem.toggleClass('icon-success');
             }
         }
-        if(leader && self.user.id == leader.id && self.timer < 0) {
-            $('#btnStart').attr("disabled",false);
+        if (leader && self.user.id == leader.id && self.timer < 0) {
+            $('#btnStart').attr("disabled", false);
         } else {
-            $('#btnStart').attr("disabled",true);
+            $('#btnStart').attr("disabled", true);
         }
 
     }
@@ -216,18 +216,18 @@ function Game(url) {
     };
 
     this._remoteSync = function (data) {
-    //    console.log("MOUSE UP");
+        //    console.log("MOUSE UP");
         self.drawer.isDrawing = false;
         self.remotePen.onMouseUp();
-       // self.canvas.loadFromJSON(data.canvas, self.canvas.renderAll.bind(self.canvas));
+        // self.canvas.loadFromJSON(data.canvas, self.canvas.renderAll.bind(self.canvas));
     };
 
     this._remoteMove = function (data) {
-   //     console.log("moving remote x:" + data.x + " y:"+ data.y);
+        //     console.log("moving remote x:" + data.x + " y:"+ data.y);
         self.remotePen.color = data.color;
         self.remotePen.width = data.size;
 
-        if(data.isDrawing && !self.drawer.isDrawing) {
+        if (data.isDrawing && !self.drawer.isDrawing) {
             console.log("MOUSE DOWN");
             self.drawer.isDrawing = true;
             self.remotePen.onMouseDown(data.pointer);
@@ -240,7 +240,7 @@ function Game(url) {
 
         if (self.user.isDrawing && ($.now() - self.user.lastEmit > 10)) {
             self.socket.emit('mousemove', {
-                'pointer':pointer,
+                'pointer': pointer,
                 'isDrawing': self.user.isDrawing,
                 'color': self.canvas.freeDrawingBrush.color,
                 'size': self.canvas.freeDrawingBrush.width
@@ -264,9 +264,9 @@ function Game(url) {
 
     this._onLocalObjectAdded = function (e) {
         self.user.isDrawing = false;
-     //   self.socket.emit('canvas:sync', {
-     //       'canvas': self.canvas.toObject()
-    //    });
+        //   self.socket.emit('canvas:sync', {
+        //       'canvas': self.canvas.toObject()
+        //    });
     };
 
 

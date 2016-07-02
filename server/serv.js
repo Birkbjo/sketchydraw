@@ -38,7 +38,7 @@ function connectUser(socket) {
     var data = socket.request.session.user;
     socket.user = data;
     //Prevent existing users to add users
-    if (typeof data == 'undefined' ||data.joinedRoom) {
+    if (typeof data == 'undefined' || data.joinedRoom) {
         io.to(socket.id).emit('disconnect', -1);
         return;
     }
@@ -55,7 +55,7 @@ function connectUser(socket) {
     } else {
         console.log("Failed to connect");
     }
-} 
+}
 
 // Listen for incoming connections from clients
 io.on('connection', function (socket) {
@@ -70,9 +70,9 @@ io.on('connection', function (socket) {
         }
     });
 
-    socket.on('canvas:sync', function(data) {
+    socket.on('canvas:sync', function (data) {
         if (rooms[socket.roomid].isDrawer(socket)) {
-            socket.broadcast.to(socket.roomid).emit('canvas:sync',data);
+            socket.broadcast.to(socket.roomid).emit('canvas:sync', data);
         }
     });
 
@@ -133,7 +133,7 @@ io.on('connection', function (socket) {
 });
 
 var loginIo = sio.of('/login');
-loginIo.on('connection',function(socket) {
+loginIo.on('connection', function (socket) {
     socket.on('refreshsessionlist', function () {
         var list = [];
         for (var id in rooms) {
