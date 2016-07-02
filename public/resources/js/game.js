@@ -32,6 +32,7 @@ function Game(url) {
 
     function init() {
         self.disableDrawing();
+        self.canvas.on('path:created', self._onLocalPathAdded);
         self.initSocketListeners();
         self.initHtmlListeners();
     }
@@ -59,7 +60,9 @@ function Game(url) {
 
 
     this.enableDrawing = function () {
+        var len = self.canvas.__eventListeners ? Object.keys(self.canvas.__eventListeners).length : 0;
         self.canvas.removeListeners(); //be sure that we remove listeners before we add them again.
+        console.log("ENABLE DRAWING. NR LISTENERS: " + len);
         self.canvas.isDrawingMode = true;
         self._clearCanvas();
         self.canvas.freeDrawingBrush.color = $("#color_picker").val() || '#000';
@@ -67,11 +70,15 @@ function Game(url) {
         self.canvas._initEventListeners();
         self.canvas.on('mouse:move', self._onLocalMouseMove);
         self.canvas.on('mouse:down', self._onLocalMouseDown);
+        console.log("After enable NR LISTENERS: " + Object.keys(self.canvas.__eventListeners).length);
     }
     this.disableDrawing = function () {
+        var len = self.canvas.__eventListeners ? Object.keys(self.canvas.__eventListeners).length : 0;
+        console.log("DISABLE DRAWING. NR LISTENERS: " + len);
         self.canvas.isDrawingMode = false;
         self.canvas.removeListeners();
-        self.canvas.on('path:created', self._onLocalPathAdded);
+
+        console.log("After disable NR LISTENERS: " + len);
     }
 
     //Fired after user joined a room. Data is the user object
@@ -129,6 +136,7 @@ function Game(url) {
 
     this._endRound = function (data) {
         self.disableDrawing();
+        self._clearCanvas();
         self.timer = -1;
         $('#timeRound').text(0);
         $('hintwords').empty();
