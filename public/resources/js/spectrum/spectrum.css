@@ -253,14 +253,15 @@ Here are the basic themeable display options (colors, fonts, global widths).
 See http://bgrins.github.io/spectrum/themes/ for instructions.
 */
 
+
 .sp-container {
     border-radius: 0;
-    background-color: #ECECEC;
-    border: solid 1px #f0c49B;
+    background-color: #4e5d6c;
+   /* border: solid 1px #f0c49B; */
     padding: 0;
 }
 .sp-container, .sp-container button, .sp-container input, .sp-color, .sp-hue, .sp-clear {
-    font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif;
+   /* font: normal 12px "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Geneva, Verdana, sans-serif; */
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
@@ -308,12 +309,10 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 }
 .sp-picker-container {
     width: 172px;
-    border-left: solid 1px #fff;
 }
 
 /* Palettes */
 .sp-palette-container {
-    border-right: solid 1px #ccc;
 }
 
 .sp-palette-only .sp-palette-container {
@@ -370,8 +369,8 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     display:inline-block;
     *zoom: 1;
     *display: inline;
-    border: solid 1px #91765d;
-    background: #eee;
+    box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
+    background: #546E7A;
     color: #333;
     vertical-align: middle;
 }
@@ -416,8 +415,10 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     padding-bottom:0;
 }
 
-
-/* Buttons: http://hellohappy.org/css3-buttons/ */
+.sp-container button {
+    margin-left:5px;
+}
+/* Buttons: http://hellohappy.org/css3-buttons/
 .sp-container button {
   background-color: #eeeeee;
   background-image: -webkit-linear-gradient(top, #eeeeee, #cccccc);
@@ -455,11 +456,11 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
     -moz-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
     -ms-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
     -o-box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
-    box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee;
+    box-shadow: inset 0 0 5px 2px #aaaaaa, 0 1px 0 0 #eeeeee; */
 }
 .sp-cancel {
     font-size: 11px;
-    color: #d93f3f !important;
+
     margin:0;
     padding:2px;
     margin-right: 5px;
@@ -468,8 +469,7 @@ See http://bgrins.github.io/spectrum/themes/ for instructions.
 
 }
 .sp-cancel:hover {
-    color: #d93f3f !important;
-    text-decoration: underline;
+
 }
 
 

@@ -33,7 +33,7 @@ function changeSize(val) {
 function drawColorPalette() {
     $("#color_picker").show();
     $("#color_picker").spectrum({
-        color: "#000000",
+        color: "#00000",
         className: "color",
         showInitial: true,
         showPaletteOnly: true,
