@@ -3,6 +3,7 @@
 	<link rel="stylesheet" type="text/css" href="../resources/css/draw.css">
 	<link rel='stylesheet' href='../resources/js/spectrum/spectrum.css' />
 	<!--<link href="../resources/css/bootstrapsuper.css" rel="stylesheet"> -->
+	<script src="https://use.fontawesome.com/eb463d1dd3.js"></script>
 	<link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
 
 </head>
@@ -36,18 +37,21 @@
 		<div id="cursors"></div>
 		<canvas id="paper" width="700px" height="700px"></canvas>
 		<div id="controls">
-			<button id="clearPaper">Clear</button>
 			<div class="controlGrp">
 				<label>Pick color</label> <br />
 				<input id="color_picker" type="text" />
 			</div>
+			<button id = "undoBtn">
+			<i class="fa fa-undo" aria-hidden="true"></i></button>
+
+
 			<div class="controlGrp">
 				<label>Size</label><br />
 				<input type="range" min="1" id="rangesize" value="4"max="100" oninput="changeSize(this.value)" onchange="changeSize(this.value);">
 				<input type="number" id="nrSize" min="1" value="4" max="100" oninput="changeSize(this.value)" onchange="changeSize(this.value);" >
 				
 			</div>
-			
+			<button id="clearPaper">Clear</button>
 		</div>
 	</div>
 

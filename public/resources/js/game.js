@@ -26,6 +26,7 @@ function Game(url) {
         isDrawingMode: true,
         selection: false
     });
+    this.drawHistory = [];
     this.remotePen = new fabric.PencilBrush(this.canvas);
 
 
@@ -43,6 +44,8 @@ function Game(url) {
         self.socket.on('updateusers', this._updateUsers);
         self.socket.on('updatescore', this._updateUserScore);
         self.socket.on('moving', this._remoteMove);
+        self.socket.on('canvas:added',this._remotePathAdded);
+        self.socket.on('canvas:undo',this._remoteUndo);
         self.socket.on('canvas:sync', this._remoteSync);
         self.socket.on('startgame', this._startGame);
         self.socket.on('endround', this._endRound);
@@ -56,7 +59,7 @@ function Game(url) {
 
 
     this.enableDrawing = function () {
-        self.disableDrawing(); //be sure that we remove listeners before we add them again.
+        self.canvas.removeListeners(); //be sure that we remove listeners before we add them again.
         self.canvas.isDrawingMode = true;
         self._clearCanvas();
         self.canvas.freeDrawingBrush.color = $("#color_picker").val() || '#000';
@@ -64,11 +67,11 @@ function Game(url) {
         self.canvas._initEventListeners();
         self.canvas.on('mouse:move', self._onLocalMouseMove);
         self.canvas.on('mouse:down', self._onLocalMouseDown);
-        self.canvas.on('object:added', self._onLocalObjectAdded);
     }
     this.disableDrawing = function () {
         self.canvas.isDrawingMode = false;
         self.canvas.removeListeners();
+        self.canvas.on('path:created', self._onLocalPathAdded);
     }
 
     //Fired after user joined a room. Data is the user object
@@ -179,11 +182,11 @@ function Game(url) {
     };
 
     this._clearCanvas = function (data) {
-
         self.canvas.clear();
+        self.drawHistory.length = 0;
     }
 
-    this._drawerClearCanvas = function () {
+    this._onLocalClearCanvas = function () {
         if (self.drawer.id == self.user.id) {
             self._clearCanvas();
             self.socket.emit('clear');
@@ -228,12 +231,25 @@ function Game(url) {
         self.remotePen.width = data.size;
 
         if (data.isDrawing && !self.drawer.isDrawing) {
-            console.log("MOUSE DOWN");
+            console.log("REMOTE MOUSE DOWN");
             self.drawer.isDrawing = true;
             self.remotePen.onMouseDown(data.pointer);
         }
         self.remotePen.onMouseMove(data.pointer);
     };
+
+    this._remotePathAdded = function() {
+        console.log("REMOTE MOUSE UP");
+
+        self.remotePen.onMouseUp(); //fire localpathadded
+        self.drawer.isDrawing = false;
+   //     self._addPathToHistory(e.target);
+    }
+
+    this._remoteUndo = function() {
+        console.log("REMOTE UNDO");
+        self._removePathFromHistory();
+    }
 
     this._onLocalMouseMove = function (e) {
         var pointer = self.canvas.getPointer(e.e);
@@ -248,9 +264,7 @@ function Game(url) {
             self.user.lastEmit = $.now();
         }
     };
-    //  this._onLocalMouseUp = function() {
 
-    //  }
     this._onLocalMouseDown = function (e) {
         var pointer = self.canvas.getPointer(e.e);
         self.user.isDrawing = true;
@@ -261,12 +275,37 @@ function Game(url) {
             'size': self.canvas.freeDrawingBrush.width
         });
     };
+    this._addPathToHistory = function(path) {
+        console.log("adding " + path)
+        self.drawHistory.push(path);
+    }
 
-    this._onLocalObjectAdded = function (e) {
+    this._removePathFromHistory = function() {
+        var his = self.drawHistory;
+        console.log(his.length);
+        if (his.length <= 0) return;
+        var ret = self.canvas.remove(his[his.length-1]);
+        console.log(ret + " ret");
+        console.log(his.length);
+        his.pop();
+    };
+
+    this._onLocalPathAdded = function (e) {
+        console.log("object added");
+        console.log(e);
         self.user.isDrawing = false;
-        //   self.socket.emit('canvas:sync', {
-        //       'canvas': self.canvas.toObject()
-        //    });
+        self._addPathToHistory(e.path);
+        if (self.user.id == self.drawer.id) {
+            console.log("emit canvas added")
+            self.socket.emit('canvas:added');
+        }
+
+
+    };
+
+    this._onLocalUndo = function (e) {
+        this._removePathFromHistory();
+        self.socket.emit('canvas:undo');
     };
 
 
@@ -303,8 +342,11 @@ function Game(url) {
         });
 
         $('#clearPaper').on('click', function (e) {
-            self._drawerClearCanvas();
+            self._onLocalClearCanvas();
             self.socket.emit('clear');
+        });
+        $('#undoBtn').on('click',function (e) {
+           self._onLocalUndo(e);
         });
 
     };

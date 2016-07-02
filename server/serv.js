@@ -76,6 +76,18 @@ io.on('connection', function (socket) {
         }
     });
 
+    socket.on('canvas:added', function (data) {
+        if (rooms[socket.roomid].isDrawer(socket)) {
+            socket.broadcast.to(socket.roomid).emit('canvas:added', data);
+        }
+    });
+
+    socket.on('canvas:undo', function (data) {
+        if (rooms[socket.roomid].isDrawer(socket)) {
+            socket.broadcast.to(socket.roomid).emit('canvas:undo', data);
+        }
+    });
+
     socket.on('clear', function (data) {
         if (rooms[socket.roomid].isDrawer(socket)) {
             socket.broadcast.to(socket.roomid).emit('clear', data);

@@ -68,8 +68,7 @@ input[type="button"]:disabled {
 }
 .controlGrp {
 	margin:5px;
-	display:block;
-	float:left;
+	display:inline-block;
 }
 .controlGrp input {
 	margin-top:10px;
