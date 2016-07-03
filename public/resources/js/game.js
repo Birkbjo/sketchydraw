@@ -26,6 +26,7 @@ function Game(url) {
         isDrawingMode: true,
         selection: false
     });
+    this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
     this.drawHistory = [];
     this.remotePen = new fabric.PencilBrush(this.canvas);
 
@@ -64,12 +65,11 @@ function Game(url) {
         self.canvas.removeListeners(); //be sure that we remove listeners before we add them again.
         console.log("ENABLE DRAWING. NR LISTENERS: " + len);
         self.canvas.isDrawingMode = true;
-
         self._clearCanvas();
         self.canvas.freeDrawingBrush.color = $("#color_picker").val() || '#000';
         self.canvas.freeDrawingBrush.width = $('#rangesize').val() || 5;
         self.canvas._initEventListeners();
-        self.canvas.freeDrawingBrush.onMouseUp();
+
         self.canvas.on('mouse:move', self._onLocalMouseMove);
         self.canvas.on('mouse:down', self._onLocalMouseDown);
         console.log("After enable NR LISTENERS: " + Object.keys(self.canvas.__eventListeners).length);
@@ -77,7 +77,9 @@ function Game(url) {
     this.disableDrawing = function () {
         var len = self.canvas.__eventListeners ? Object.keys(self.canvas.__eventListeners).length : 0;
         console.log("DISABLE DRAWING. NR LISTENERS: " + len);
+        self.canvas.freeDrawingBrush._reset();
         self.canvas.isDrawingMode = false;
+        self.user.isDrawing = false;
         self.canvas.removeListeners();
 
         console.log("After disable NR LISTENERS: " + len);
@@ -123,6 +125,7 @@ function Game(url) {
     this._startGame = function (data) {
         $('#connectedUsers li').removeClass("icon-draw icon-success");
         self.setDrawer(data.drawer);
+
         self._clearCanvas();
         self.timer = data.time / 1000;
         $('#timeRound').text(self.timer);
@@ -137,6 +140,10 @@ function Game(url) {
     };
 
     this._endRound = function (data) {
+        //Canvas may not have captured mouseup event if game ended while drawing
+        if(self.user.isDrawing) {
+            self.canvas._onMouseUpInDrawingMode();
+        }
         self.disableDrawing();
         self._clearCanvas();
         self.timer = -1;
