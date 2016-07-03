@@ -106,7 +106,7 @@ io.on('connection', function (socket) {
         console.log(msg.uname + " : " + msg.msg + "--- to " + socket.roomid);
         var currWord = rooms[socket.roomid].currWord;
         var guessed = msg.msg.trim().toLowerCase();
-        if (currWord != null && guessed == currWord.toLowerCase()) {
+        if (currWord != null && guessed.distance(currWord)/currWord.length <= 0.2) {
             rooms[socket.roomid].guessedCorrectly(socket, msg);
         }
         else {
@@ -220,6 +220,26 @@ function cmdStatus(cmds) {
             console.log("  " + userOut.name + ": id " + userOut.id + ", usock " + userOut.usock + ", score " + userOut.score + ", correct " + userOut.correct);
         }
     }
+}
+
+String.prototype.distance = function(string) {
+    var a = this, b = string + "", m = [], i, j, min = Math.min;
+
+    if (!(a && b)) return (b || a).length;
+
+    for (i = 0; i <= b.length; m[i] = [i++]);
+    for (j = 0; j <= a.length; m[0][j] = j++);
+
+    for (i = 1; i <= b.length; i++) {
+        for (j = 1; j <= a.length; j++) {
+            m[i][j] = b.charAt(i - 1) == a.charAt(j - 1)
+                ? m[i - 1][j - 1]
+                : m[i][j] = min(
+                    m[i - 1][j - 1] + 1, 
+                    min(m[i][j - 1] + 1, m[i - 1 ][j] + 1))
+        }
+    }
+    return m[b.length][a.length];
 }
 
 exports.tearDownRoom = tearDownRoom;
