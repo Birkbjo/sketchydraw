@@ -106,7 +106,7 @@ io.on('connection', function (socket) {
         console.log(msg.uname + " : " + msg.msg + "--- to " + socket.roomid);
         var currWord = rooms[socket.roomid].currWord;
         var guessed = msg.msg.trim().toLowerCase();
-        if (currWord != null && guessed.distance(currWord)/currWord.length <= 0.2) {
+        if (currWord != null && (guessed == currWord.toLowerCase() || guessed.distance(currWord)/currWord.length <= 0.2)) {
             rooms[socket.roomid].guessedCorrectly(socket, msg);
         }
         else {
