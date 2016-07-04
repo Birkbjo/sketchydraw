@@ -1,10 +1,10 @@
 var wordList = require('./words.js');
 var serv = require('./serv.js');
+var HintWord = require('./hintword.js');
 var io = serv.io;
 var ROUNDTIMER = 60000;
 var MAXCON = 20;
 var wordArr = wordList.words;
-
 module.exports = Room;
 
 function Room(data) {
@@ -218,23 +218,16 @@ Room.prototype.startGuess = function (socket, word) {
 
 //Socket is the socket of the currently drawing user.
 Room.prototype.giveHints = function (word, socket) {
-    var chars = word.split("");
-    var len = chars.length;
-    var times = Math.floor(chars.length / 2);
-    var spIndex = findSpaces(word);
-    chars = chars.map(function (val, ind) {
-        var obj = {};
-        obj.val = val
-        obj.orgIndex = ind;
-        return obj;
-    });
-
-    for (var i = 0; i < spIndex.length; i++) {
-        chars.splice(spIndex[i], 1);
-    }
-    var data = {'leng': len, 'spaceInd': spIndex};
-    socket.broadcast.to(socket.roomid).emit('hintlength', data);
+    var hint = new HintWord(word);
+    var initHints = hint.getInitialHints();
+    var len = hint.getNrPotentialHints();
     var interval = (ROUNDTIMER) / len;
+    console.log(initHints);
+    var times = Math.floor(len / 2);
+
+
+    socket.broadcast.to(socket.roomid).emit('initialHints', initHints);
+
     var count = 0;
     console.log("interval: " + interval + " word length" + len + " times: " + times);
 //ar hintInterval = this.hintInterval;
@@ -243,16 +236,10 @@ Room.prototype.giveHints = function (word, socket) {
             clearInterval(this.hintInterval);
             return;
         }
-        var hint = (function () {
-            var ind = Math.floor(Math.random() * chars.length);
-            var char = chars[ind].val;
-            var orgInd = chars[ind].orgIndex;
-            chars.splice(ind, 1);
-            return {'char': char, 'index': orgInd};
-        })();
-        console.log("Hint is " + hint.char + " index " + hint.index);
-        socket.broadcast.to(socket.roomid).emit('hint', hint);
+        var nextHint = hint.getNextHint();
+        socket.broadcast.to(socket.roomid).emit('hint', nextHint);
         count++;
+
     }, interval);
 }
 
@@ -325,6 +312,8 @@ function getRandomWords() {
     var arr = [wordArr[rindex], wordArr[rindex2], wordArr[rindex3]];
     return arr;
 }
+
+
 
 function findSpaces(word) {
     var spaces = [];

@@ -14,6 +14,9 @@ $(function () {
     });
 
 });
+
+
+
 function Game(url) {
     var self = this;
     this.socket = io.connect(url);
@@ -29,7 +32,7 @@ function Game(url) {
     this.canvas.freeDrawingBrush = new fabric.PencilBrush(this.canvas);
     this.drawHistory = [];
     this.remotePen = new fabric.PencilBrush(this.canvas);
-
+    this.hintword = new Hint($('#hintwords'));
 
     function init() {
         self.disableDrawing();
@@ -54,7 +57,7 @@ function Game(url) {
         self.socket.on('yourturn', this._selectWord);
         self.socket.on('chat', this._chatMessage);
         self.socket.on('clear', this._clearCanvas);
-        self.socket.on('hintlength', this._initHint);
+        self.socket.on('initialHints', this._initHint);
         self.socket.on('hint', this._hintGiven);
         self.socket.on('disconnect', this._disconnectUser);
     }
@@ -148,7 +151,7 @@ function Game(url) {
         self._clearCanvas();
         self.timer = -1;
         $('#timeRound').text(0);
-        $('hintwords').empty();
+        self.hintword.clear();
 
         var $overlay = $('#turnoverlay');
         $overlay.hide(400);
@@ -169,7 +172,7 @@ function Game(url) {
         var index;
         var wordslist = $('#words li').click(function () {
             index = wordslist.index(this);
-            $('#hintwords').text(words[index]);
+            self.hintword.render(words[index]);
             self.socket.emit('selectedword', words[index]);
             self.enableDrawing();
             $overlay.hide(400);
@@ -211,24 +214,11 @@ function Game(url) {
     };
 
     this._initHint = function (data) {
-        console.log("len " + data.leng + "sp " + data.spaceInd.toString());
-        $('#hintwords').empty();
-        for (var i = 0; i < data.leng; i++) {
-            if (data.spaceInd.indexOf(i) >= 0) {
-                $('#hintwords').append("  ");
-                data.spaceInd.splice(i, 1);
-            } else {
-                $('#hintwords').append("_");
-            }
-        }
+        self.hintword.init(data);
     };
 
     this._hintGiven = function (data) {
-        var hints = $('#hintwords').text();
-        console.log("replace " + data.index + " with " + data.char);
-        hints = hints.replaceAt(data.index, data.char);
-
-        $('#hintwords').text(hints);
+        self.hintword.addHint(data);
     };
 
     this._disconnectUser = function (err) {
@@ -299,21 +289,15 @@ function Game(url) {
 
     this._removePathFromHistory = function() {
         var his = self.drawHistory;
-        console.log(his.length);
         if (his.length <= 0) return;
         var ret = self.canvas.remove(his[his.length-1]);
-        console.log(ret + " ret");
-        console.log(his.length);
         his.pop();
     };
 
     this._onLocalPathAdded = function (e) {
-        console.log("object added");
-        console.log(e);
         self.user.isDrawing = false;
         self._addPathToHistory(e.path);
         if (self.user.id == self.drawer.id) {
-            console.log("emit canvas added")
             self.socket.emit('canvas:added');
         }
 
@@ -372,5 +356,59 @@ function Game(url) {
 }
 
 
+function Hint(domElem,initialHints) {
+    this.domElem = domElem;
+    this.hints = [];
+    if(initialHints) {
+        this.initialHints = initialHints;
+        this.init();
+    }
 
+}
 
+//If called with initialHints, the object will reset and
+//and use argument as new initial hint. This is so an instance of this class
+//can be reused with the same DOM-element.
+Hint.prototype.init = function(initHints) {
+    var data;
+    if(initHints) {
+        data = initHints;
+    } else {
+        data = this.initialHints;
+    }
+    console.log("len " + data.len + " inits: " + JSON.stringify(data));
+    this.hints.length = 0; //ensure empty array
+    for (var i = 0; i < data.len; i++) {
+        if (data.spInd.indexOf(i) >= 0) {
+           this.hints.push("  ");
+        } else if (data.dashInd.indexOf(i) >= 0) {
+            this.hints.push("-");
+        } else if (data.apoInd.indexOf(i) >= 0) {
+            this.hints.push("'");
+        } else {
+            this.hints.push("_");
+        }
+    }
+    this.render();
+}
+
+Hint.prototype.addHint = function (hint) {
+    console.log("add hint " + JSON.stringify(hint));
+    this.hints[hint.index] = hint.char;
+    this.render();
+}
+
+//Renders the given word if present, or the
+//Internal hint-array
+Hint.prototype.render = function (word) {
+    if(word) {
+        this.domElem.text(word);
+    } else {
+        this.domElem.text(this.hints.join(""));
+    }
+
+}
+
+Hint.prototype.clear = function() {
+    this.domElem.empty();
+}
