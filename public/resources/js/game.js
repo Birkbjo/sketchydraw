@@ -212,7 +212,7 @@ function Game(url) {
             self.socket.emit('clear');
         }
     };
-
+    
     this._initHint = function (data) {
         self.hintword.init(data);
     };
@@ -366,7 +366,7 @@ function Hint(domElem,initialHints) {
 
 }
 
-//If called with initialHints, the object will reset and
+//If called with initialHints, the object will reset
 //and use argument as new initial hint. This is so an instance of this class
 //can be reused with the same DOM-element.
 Hint.prototype.init = function(initHints) {
