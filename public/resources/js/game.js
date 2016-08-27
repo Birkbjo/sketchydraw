@@ -212,7 +212,7 @@ function Game(url) {
             self.socket.emit('clear');
         }
     };
-    
+
     this._initHint = function (data) {
         self.hintword.init(data);
     };

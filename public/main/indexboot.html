@@ -62,17 +62,9 @@
       <h2>It's your turn, choose a word!</h2>
       <ul id="words"></ul>
     </div>
-          <canvas id="paper" width="583px" height="583px"></canvas>
+          <canvas id="paper" ></canvas>
           <div class="well control">
-           <div id="color">
-        <!--   <div class="row">
-              <div class="col-md-6>">
-                
-                asf
-              </div>
-            </div> -->
-
-          </div>
+              <input id="color_picker" type="button" />
 
             <button class="btn btn-primary btn-sm">Clear</button>
           </div>
@@ -101,30 +93,12 @@
     </div> <!-- /container -->
 
 
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-    <script src="../bootstrap/dist/js/bootstrap.min.js"></script>
-    <script src="../bootstrap/assets/js/ie10-viewport-bug-workaround.js"></script>
-
-    <script src="../resources/js/mainutil.js"></script>
-    <script src="../resources/js/colorpicker/js/bootstrap-colorpicker.min.js"></script>
-
-    <script src='/socket.io/socket.io.js'></script> 
-    
-  <script src="../resources/js/clientdraw.js"></script>
-    <script>
-     $(function(){
-        $('#color').colorpicker({
-         container:"#color",
-         inline:true,
-         color:"#00000"
-        }).on('changeColor.colorpicker', function(event) {
-          pickedcolor = event.color.toHex();
-
-        });
-
-    });
-    </script>
+    <script src="http://code.jquery.com/jquery-1.12.4.min.js"></script>
+    <script src='../resources/js/spectrum/spectrum.js'></script>
+    <script type="text/javascript" src="../resources/js/mainutil.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.2/fabric.min.js"></script>
+    <script src="../resources/js/game.js"></script>
+    <script src='/socket.io/socket.io.js'></script>
 
   </body>
 
